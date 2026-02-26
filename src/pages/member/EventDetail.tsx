@@ -1,0 +1,140 @@
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { events } from '@/data/mockData';
+import { ArrowLeft, MapPin, Clock, Users, CheckCircle } from 'lucide-react';
+import PaymentModal from '@/components/PaymentModal';
+
+const EventDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const event = events.find(e => e.id === id);
+
+  const [rsvpd, setRsvpd] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+
+  if (!event) {
+    return (
+      <div className="px-4 py-8 text-center">
+        <p className="text-muted-foreground">Event not found</p>
+        <button onClick={() => navigate(-1)} className="mt-4 text-sm text-primary font-medium">Go back</button>
+      </div>
+    );
+  }
+
+  const handleRSVP = () => {
+    if (event.isPaid) {
+      setShowPayment(true);
+    } else {
+      setRsvpd(true);
+    }
+  };
+
+  const spotsLeft = event.capacity - event.registered;
+  const progress = (event.registered / event.capacity) * 100;
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="relative max-w-3xl mx-auto">
+        <div className={`h-48 lg:h-56 lg:rounded-b-2xl ${event.isPaid ? 'gradient-gold' : 'gradient-primary'} flex items-end`}>
+          <div className="absolute top-4 left-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="w-9 h-9 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center text-primary-foreground"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="w-full p-5 pb-0">
+            <div className="bg-card rounded-t-2xl px-5 pt-5">
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground capitalize">
+                {event.type}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 max-w-3xl mx-auto">
+        <div className="bg-card rounded-b-2xl border border-t-0 border-border p-5 lg:p-8 shadow-sm -mt-0.5">
+          <h1 className="text-xl lg:text-2xl font-bold mb-2">{event.title}</h1>
+          <p className="text-sm text-muted-foreground mb-4">{event.description}</p>
+
+          <div className="space-y-3 mb-5">
+            <div className="flex items-center gap-3 text-sm">
+              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                <Clock className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <p className="font-medium">{new Date(event.date).toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
+                <p className="text-xs text-muted-foreground">{event.time}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 text-sm">
+              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                <MapPin className="w-4 h-4 text-primary" />
+              </div>
+              <p className="font-medium">{event.location}</p>
+            </div>
+            <div className="flex items-center gap-3 text-sm">
+              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0">
+                <Users className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium">{event.registered} / {event.capacity} registered</p>
+                <div className="w-full h-1.5 bg-muted rounded-full mt-1.5 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">{spotsLeft} spots left</p>
+              </div>
+            </div>
+          </div>
+
+          {event.isPaid && (
+            <div className="bg-accent/10 rounded-xl p-4 mb-5">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Event Fee</span>
+                <span className="text-xl font-bold text-accent-foreground">KES {event.price?.toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+
+          {rsvpd ? (
+            <div className="bg-secondary rounded-xl p-4 text-center">
+              <CheckCircle className="w-8 h-8 text-primary mx-auto mb-2" />
+              <p className="text-sm font-semibold text-secondary-foreground">You're registered!</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {event.isPaid ? 'Payment confirmed. See you there!' : "We'll see you there!"}
+              </p>
+            </div>
+          ) : (
+            <button
+              onClick={handleRSVP}
+              className={`w-full py-3.5 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] text-primary-foreground ${
+                event.isPaid ? 'gradient-gold text-accent-foreground shadow-gold' : 'gradient-primary shadow-church'
+              }`}
+            >
+              {event.isPaid ? `Pay & Register - KES ${event.price?.toLocaleString()}` : 'RSVP - Free Event'}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Payment Modal - rendered via portal */}
+      {event.isPaid && (
+        <PaymentModal
+          show={showPayment}
+          onClose={() => setShowPayment(false)}
+          onSuccess={() => setRsvpd(true)}
+          eventTitle={event.title}
+          price={event.price!}
+        />
+      )}
+    </div>
+  );
+};
+
+export default EventDetail;
