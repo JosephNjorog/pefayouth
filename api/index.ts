@@ -39,6 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── Events ────────────────────────────────────────────────────────────────
     if (seg0 === 'events') {
       if (!seg1) return await eventsCollection(req, res);
+      if (seg2 === 'register') return await eventRegister(req, res, seg1);
       return await eventById(req, res, seg1);
     }
 
@@ -264,6 +265,21 @@ async function eventById(req: VercelRequest, res: VercelResponse, id: string) {
     return ok(res, { message: 'Event deleted' });
   }
   return err(res, 'Method not allowed', 405);
+}
+
+// ─── Event Registration (free RSVP) ──────────────────────────────────────────
+
+async function eventRegister(req: VercelRequest, res: VercelResponse, id: string) {
+  if (req.method !== 'POST') return err(res, 'Method not allowed', 405);
+  const user = await requireAuth(req, res);
+  if (!user) return;
+  const [event] = await db.select().from(events).where(eq(events.id, id)).limit(1);
+  if (!event) return err(res, 'Event not found', 404);
+  if (event.isPaid) return err(res, 'Paid events require payment via M-Pesa', 400);
+  if (event.registered >= event.capacity) return err(res, 'Event is fully booked', 400);
+  // Increment registered count
+  const [updated] = await db.update(events).set({ registered: event.registered + 1, updatedAt: new Date() }).where(eq(events.id, id)).returning();
+  return ok(res, { message: 'Registered successfully', event: updated });
 }
 
 // ─── Attendance ───────────────────────────────────────────────────────────────

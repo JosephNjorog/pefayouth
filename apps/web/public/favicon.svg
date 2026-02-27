@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Background circle with teal gradient -->
+  <circle cx="32" cy="32" r="32" fill="#0d6e5e"/>
+  <circle cx="32" cy="32" r="30" fill="#0f7d6b"/>
+
+  <!-- Cross -->
+  <rect x="29" y="10" width="6" height="36" rx="3" fill="white" opacity="0.95"/>
+  <rect x="16" y="21" width="32" height="6" rx="3" fill="white" opacity="0.95"/>
+
+  <!-- Small flame / spark at top of cross -->
+  <path d="M32 8 C30 5, 27 3, 28 1 C29 3, 31 2, 32 0 C33 2, 35 3, 36 1 C37 3, 34 5, 32 8Z" fill="#f6c90e"/>
+
+  <!-- Subtle glow ring -->
+  <circle cx="32" cy="32" r="30" stroke="white" stroke-width="0.5" opacity="0.2" fill="none"/>
+</svg>
