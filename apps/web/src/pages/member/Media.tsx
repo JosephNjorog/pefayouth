@@ -1,15 +1,28 @@
 import { useState } from 'react';
-import { sermons, galleryItems } from '@/data/mockData';
-import { Play, Headphones, Image, Video, Clock, User } from 'lucide-react';
+import { useSermons, useGallery } from '@/hooks/useApi';
+import { Play, Headphones, Image, Video, Clock, User, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Media = () => {
   const [tab, setTab] = useState<'sermons' | 'gallery'>('sermons');
   const [sermonFilter, setSermonFilter] = useState<'all' | 'video' | 'audio'>('all');
 
+  const { data: sermons = [], isLoading: sermonsLoading } = useSermons();
+  const { data: galleryItems = [], isLoading: galleryLoading } = useGallery();
+
+  const isLoading = sermonsLoading || galleryLoading;
+
   const filteredSermons = sermonFilter === 'all'
     ? sermons
     : sermons.filter(s => s.type === sermonFilter);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 lg:px-6 py-5 lg:py-8 space-y-5">
