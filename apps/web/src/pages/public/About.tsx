@@ -48,7 +48,7 @@ const About = () => {
               <h2 className="text-2xl sm:text-3xl font-bold mb-4">Who We Are</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  YouthConnect is the youth ministry arm of our church, dedicated to raising a generation that knows Christ and walks in His purpose. Founded in 2015, we have grown from a small group of 20 young people to a thriving community of over 200 members.
+                  PEFA Youth is the youth ministry of PEFA Church Kajiado, dedicated to raising a generation that knows Christ and walks in His purpose. We are a growing community of young people committed to faith, fellowship, and service.
                 </p>
                 <p>
                   We meet every Sunday for worship, have weekly fellowship gatherings on Fridays, and organize life-changing retreats and camps throughout the year. Our cell groups provide intimate spaces for discipleship and accountability.
