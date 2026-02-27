@@ -3,15 +3,16 @@ import { Play, Headphones, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { sermons } from '@/data/mockData';
+import { useSermons } from '@/hooks/useApi';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 const PublicSermons = () => {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'audio' | 'video'>('all');
+  const { data: allSermons = [], isLoading } = useSermons();
 
-  const filtered = sermons.filter(s => {
+  const filtered = allSermons.filter((s: { title: string; speaker: string; type: string }) => {
     const matchesSearch = s.title.toLowerCase().includes(search.toLowerCase()) ||
       s.speaker.toLowerCase().includes(search.toLowerCase());
     const matchesType = typeFilter === 'all' || s.type === typeFilter;
@@ -64,56 +65,76 @@ const PublicSermons = () => {
             </div>
           </div>
 
+          {/* Loading */}
+          {isLoading && (
+            <div className="text-center py-16 text-muted-foreground">
+              <Headphones className="w-12 h-12 mx-auto mb-3 opacity-40 animate-pulse" />
+              <p>Loading sermons...</p>
+            </div>
+          )}
+
           {/* Sermons Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((sermon, i) => (
-              <motion.div
-                key={sermon.id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <Card className="h-full hover:shadow-church transition-shadow">
-                  <CardContent className="pt-6">
-                    <div className="flex items-start gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                        {sermon.type === 'video' ? (
-                          <Play className="w-6 h-6 text-primary" />
-                        ) : (
-                          <Headphones className="w-6 h-6 text-primary" />
+          {!isLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((sermon: {
+                id: string;
+                type: string;
+                title: string;
+                description?: string;
+                speaker: string;
+                date: string;
+                duration?: string;
+              }, i: number) => (
+                <motion.div
+                  key={sermon.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Card className="h-full hover:shadow-church transition-shadow">
+                    <CardContent className="pt-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                          {sermon.type === 'video' ? (
+                            <Play className="w-6 h-6 text-primary" />
+                          ) : (
+                            <Headphones className="w-6 h-6 text-primary" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <Badge variant="outline" className="text-xs capitalize mb-1">{sermon.type}</Badge>
+                          <h3 className="font-semibold text-base">{sermon.title}</h3>
+                        </div>
+                      </div>
+
+                      <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{sermon.description}</p>
+
+                      <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3">
+                        <div>
+                          <p className="font-medium text-foreground">{sermon.speaker}</p>
+                          <p>{new Date(sermon.date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                        </div>
+                        {sermon.duration && (
+                          <Badge variant="secondary" className="text-xs">{sermon.duration}</Badge>
                         )}
                       </div>
-                      <div className="min-w-0">
-                        <Badge variant="outline" className="text-xs capitalize mb-1">{sermon.type}</Badge>
-                        <h3 className="font-semibold text-base">{sermon.title}</h3>
+
+                      <div className="mt-3 pt-3 border-t border-border">
+                        <Link
+                          to="/login"
+                          className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                        >
+                          Sign in to listen <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
                       </div>
-                    </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          )}
 
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{sermon.description}</p>
-
-                    <div className="flex items-center justify-between text-xs text-muted-foreground border-t border-border pt-3">
-                      <div>
-                        <p className="font-medium text-foreground">{sermon.speaker}</p>
-                        <p>{new Date(sermon.date).toLocaleDateString('en-KE', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                      </div>
-                      <Badge variant="secondary" className="text-xs">{sermon.duration}</Badge>
-                    </div>
-
-                    <div className="mt-3 pt-3 border-t border-border">
-                      <Link
-                        to="/login"
-                        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-                      >
-                        Sign in to listen <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          {filtered.length === 0 && (
+          {!isLoading && filtered.length === 0 && (
             <div className="text-center py-16 text-muted-foreground">
               <Headphones className="w-12 h-12 mx-auto mb-3 opacity-40" />
               <p>No sermons found matching your search.</p>
