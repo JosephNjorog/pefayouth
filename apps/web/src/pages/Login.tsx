@@ -41,7 +41,7 @@ const Login = () => {
             <div className="w-16 h-16 rounded-2xl gradient-gold shadow-gold flex items-center justify-center mx-auto mb-4">
               <Church className="w-8 h-8 text-accent-foreground" />
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-foreground">YouthConnect</h1>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-foreground">PEFA Youth</h1>
             <p className="text-sm lg:text-base text-primary-foreground/80 mt-1">PEFA Youth Church Management</p>
           </motion.div>
         </div>
