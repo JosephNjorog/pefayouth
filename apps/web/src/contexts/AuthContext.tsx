@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { authLogin, authLogout, authMe } from '@/lib/api';
 
 export type UserRole = 'member' | 'super_admin' | 'finance_admin' | 'secretary';
 
@@ -7,12 +8,14 @@ interface AuthUser {
   name: string;
   email: string;
   role: UserRole;
+  memberId?: string;
 }
 
 interface AuthContextType {
   user: AuthUser | null;
-  login: (email: string, password: string, role: UserRole) => boolean;
-  logout: () => void;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -20,22 +23,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const login = (email: string, _password: string, role: UserRole): boolean => {
-    const roleProfiles: Record<UserRole, AuthUser> = {
-      member: { id: 'm1', name: 'Grace Wanjiku', email, role: 'member' },
-      super_admin: { id: 'sa1', name: 'Pastor Daniel Mutua', email, role: 'super_admin' },
-      finance_admin: { id: 'fa1', name: 'Mary Wambui', email, role: 'finance_admin' },
-      secretary: { id: 'sec1', name: 'Ruth Njeri', email, role: 'secretary' },
-    };
-    setUser(roleProfiles[role]);
-    return true;
+  // Restore session from cookie on mount
+  useEffect(() => {
+    authMe()
+      .then((u) => setUser(u as AuthUser))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const u = await authLogin(email, password);
+      setUser(u as AuthUser);
+      return true;
+    } catch {
+      return false;
+    }
   };
 
-  const logout = () => setUser(null);
+  const logout = async () => {
+    try { await authLogout(); } catch {}
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
