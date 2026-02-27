@@ -7,8 +7,10 @@
   ],
   "scripts": {
     "dev": "vercel dev",
-    "build": "bun run build:web",
-    "build:web": "cd apps/web && bun run build",
+    "dev:api": "npx tsx dev-server.ts",
+    "dev:web": "cd apps/web && npm run dev",
+    "build": "cd apps/web && npm run build",
+    "build:web": "cd apps/web && npm run build",
     "db:push": "drizzle-kit push",
     "db:seed": "bun run db/seed.ts",
     "db:studio": "drizzle-kit studio"
