@@ -24,8 +24,8 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
               <Church className="w-5 h-5 text-accent-foreground" />
             </div>
             <div>
-              <span className="text-base font-bold text-primary">YouthConnect</span>
-              <span className="hidden sm:block text-[10px] text-muted-foreground -mt-0.5">Youth Church</span>
+              <span className="text-base font-bold text-primary">PEFA Youth</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground -mt-0.5">Church Kajiado</span>
             </div>
           </NavLink>
 
