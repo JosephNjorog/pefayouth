@@ -1,19 +1,23 @@
 import { useState } from 'react';
-import { Plus, ChevronDown, MapPin, Clock, Users, Edit, Trash2, Loader2 } from 'lucide-react';
+import { Plus, ChevronDown, MapPin, Clock, Users, Edit, Trash2, Loader2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useEvents, useCreateEvent, useDeleteEvent } from '@/hooks/useApi';
+import { useEvents, useCreateEvent, useUpdateEvent, useDeleteEvent } from '@/hooks/useApi';
 import { toast } from 'sonner';
 
 const eventTypes = ['service', 'seminar', 'retreat', 'camp', 'fellowship', 'outreach'] as const;
+const emptyForm = { title: '', description: '', date: '', time: '', location: '', type: '', capacity: '100', price: '0' };
 
 const EventManagement = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [filterType, setFilterType] = useState('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: '', description: '', date: '', time: '', location: '', type: '', capacity: '100', price: '0' });
+  const [editEventId, setEditEventId] = useState<string | null>(null);
+  const [form, setForm] = useState(emptyForm);
+  const [editForm, setEditForm] = useState(emptyForm);
 
   const { data: events = [], isLoading } = useEvents(filterType !== 'all' ? { type: filterType } : undefined);
   const createEvent = useCreateEvent();
+  const updateEvent = useUpdateEvent();
   const deleteEvent = useDeleteEvent();
 
   const today = new Date().toISOString().split('T')[0];
@@ -26,9 +30,34 @@ const EventManagement = () => {
     try {
       await createEvent.mutateAsync({ ...form, isPaid: Number(form.price) > 0, capacity: Number(form.capacity), price: form.price });
       toast.success('Event created successfully');
-      setForm({ title: '', description: '', date: '', time: '', location: '', type: '', capacity: '100', price: '0' });
+      setForm(emptyForm);
       setShowAddForm(false);
     } catch (err: any) { toast.error(err.message || 'Failed to create event'); }
+  };
+
+  const startEdit = (event: typeof events[0]) => {
+    setEditEventId(event.id);
+    setEditForm({
+      title: event.title,
+      description: event.description || '',
+      date: event.date,
+      time: event.time,
+      location: event.location,
+      type: event.type,
+      capacity: String(event.capacity),
+      price: String(event.price || '0'),
+    });
+    setShowAddForm(false);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editEventId || !editForm.title || !editForm.date || !editForm.time || !editForm.location || !editForm.type) return;
+    try {
+      await updateEvent.mutateAsync({ id: editEventId, data: { ...editForm, isPaid: Number(editForm.price) > 0, capacity: Number(editForm.capacity) } });
+      toast.success('Event updated successfully');
+      setEditEventId(null);
+    } catch (err: any) { toast.error(err.message || 'Failed to update event'); }
   };
 
   const handleDelete = async (id: string, title: string) => {
@@ -36,10 +65,30 @@ const EventManagement = () => {
     try {
       await deleteEvent.mutateAsync(id);
       toast.success('Event deleted');
+      if (expandedId === id) setExpandedId(null);
     } catch (err: any) { toast.error(err.message); }
   };
 
   const allEvents = filterType === 'all' ? events : events.filter(e => e.type === filterType);
+
+  const EventFormFields = ({ values, onChange }: { values: typeof emptyForm; onChange: (f: typeof emptyForm) => void }) => (
+    <div className="grid sm:grid-cols-2 gap-3">
+      <input required value={values.title} onChange={e => onChange({ ...values, title: e.target.value })} placeholder="Event Title *" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 sm:col-span-2" />
+      <textarea value={values.description} onChange={e => onChange({ ...values, description: e.target.value })} placeholder="Event Description" rows={3} className="px-4 py-3 rounded-xl border border-input bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring/20 sm:col-span-2" />
+      <input required type="date" value={values.date} onChange={e => onChange({ ...values, date: e.target.value })} className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+      <input required value={values.time} onChange={e => onChange({ ...values, time: e.target.value })} placeholder="Time (e.g. 09:00 AM) *" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+      <input required value={values.location} onChange={e => onChange({ ...values, location: e.target.value })} placeholder="Location *" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+      <div className="relative">
+        <select required value={values.type} onChange={e => onChange({ ...values, type: e.target.value })} className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
+          <option value="">Event Type *</option>
+          {eventTypes.map(t => <option key={t} value={t} className="capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
+        </select>
+        <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+      </div>
+      <input value={values.capacity} onChange={e => onChange({ ...values, capacity: e.target.value })} placeholder="Capacity" type="number" min="1" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+      <input value={values.price} onChange={e => onChange({ ...values, price: e.target.value })} placeholder="Price KES (0 = free)" type="number" min="0" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -48,7 +97,7 @@ const EventManagement = () => {
           <h1 className="text-2xl font-bold">Event Management</h1>
           <p className="text-sm text-muted-foreground mt-1">Create, edit, and manage all events</p>
         </div>
-        <button onClick={() => setShowAddForm(!showAddForm)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-primary-foreground text-sm font-medium shadow-church">
+        <button onClick={() => { setShowAddForm(!showAddForm); setEditEventId(null); }} className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-primary-foreground text-sm font-medium shadow-church">
           <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Create Event</span>
         </button>
       </div>
@@ -63,26 +112,29 @@ const EventManagement = () => {
         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="bg-card rounded-xl border border-border p-5 shadow-sm">
           <h3 className="text-sm font-semibold mb-3">Create New Event</h3>
           <form onSubmit={handleCreate}>
-            <div className="grid sm:grid-cols-2 gap-3">
-              <input required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Event Title *" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20 sm:col-span-2" />
-              <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Event Description" rows={3} className="px-4 py-3 rounded-xl border border-input bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring/20 sm:col-span-2" />
-              <input required type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-              <input required value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} placeholder="Time (e.g. 09:00 AM) *" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-              <input required value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Location *" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-              <div className="relative">
-                <select required value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
-                  <option value="">Event Type *</option>
-                  {eventTypes.map(t => <option key={t} value={t} className="capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
-                </select>
-                <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-              </div>
-              <input value={form.capacity} onChange={e => setForm(f => ({ ...f, capacity: e.target.value }))} placeholder="Capacity" type="number" min="1" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-              <input value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="Price KES (0 = free)" type="number" min="0" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-            </div>
+            <EventFormFields values={form} onChange={setForm} />
             <div className="flex justify-end gap-2 mt-4">
               <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:bg-muted transition-colors">Cancel</button>
               <button type="submit" disabled={createEvent.isPending} className="px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium flex items-center gap-2">
                 {createEvent.isPending && <Loader2 className="w-3 h-3 animate-spin" />} Create Event
+              </button>
+            </div>
+          </form>
+        </motion.div>
+      )}
+
+      {editEventId && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="bg-card rounded-xl border border-border p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold">Edit Event</h3>
+            <button onClick={() => setEditEventId(null)} className="text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
+          </div>
+          <form onSubmit={handleUpdate}>
+            <EventFormFields values={editForm} onChange={setEditForm} />
+            <div className="flex justify-end gap-2 mt-4">
+              <button type="button" onClick={() => setEditEventId(null)} className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:bg-muted transition-colors">Cancel</button>
+              <button type="submit" disabled={updateEvent.isPending} className="px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium flex items-center gap-2">
+                {updateEvent.isPending && <Loader2 className="w-3 h-3 animate-spin" />} Save Changes
               </button>
             </div>
           </form>
@@ -127,6 +179,9 @@ const EventManagement = () => {
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 pb-4">
                     <div className="bg-muted/50 rounded-xl p-4 text-sm leading-relaxed text-muted-foreground">{event.description || 'No description provided.'}</div>
                     <div className="flex justify-end gap-2 mt-3">
+                      <button onClick={() => { startEdit(event); setExpandedId(null); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-primary hover:bg-primary/10 transition-colors">
+                        <Edit className="w-3 h-3" /> Edit
+                      </button>
                       <button onClick={() => handleDelete(event.id, event.title)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 transition-colors">
                         <Trash2 className="w-3 h-3" /> Delete
                       </button>
