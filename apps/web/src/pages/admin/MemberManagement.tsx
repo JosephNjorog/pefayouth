@@ -13,7 +13,9 @@ const MemberManagement = () => {
   const [filterGroup, setFilterGroup] = useState('all');
   const [showAddForm, setShowAddForm] = useState(false);
   const [viewMemberId, setViewMemberId] = useState<string | null>(null);
+  const [editMemberId, setEditMemberId] = useState<string | null>(null);
   const [form, setForm] = useState({ name: '', phone: '', email: '', joinedDate: '', ministry: '', cellGroup: '' });
+  const [editForm, setEditForm] = useState({ name: '', phone: '', email: '', joinedDate: '', ministry: '', cellGroup: '' });
 
   const { data: members = [], isLoading } = useMembers({
     search: searchQuery || undefined,
@@ -21,6 +23,8 @@ const MemberManagement = () => {
     cellGroup: filterGroup !== 'all' ? filterGroup : undefined,
   });
   const createMember = useCreateMember();
+  const updateMember = useUpdateMember();
+  const deleteMember = useDeleteMember();
 
   const selectedMember = viewMemberId ? members.find((m) => m.id === viewMemberId) : null;
 
