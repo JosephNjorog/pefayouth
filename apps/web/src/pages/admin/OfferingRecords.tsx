@@ -1,35 +1,76 @@
 import { useState } from 'react';
-import { offerings } from '@/data/adminMockData';
-import { DollarSign, Plus, Search, ChevronDown, Download, Heart, BookOpen, Globe, Sparkles } from 'lucide-react';
+import { useOfferings, useCreateOffering } from '@/hooks/useApi';
+import { DollarSign, Plus, Download, Heart, BookOpen, Globe, Sparkles, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 const typeIcons = {
   tithe: BookOpen,
   offering: Heart,
   special: Sparkles,
   missions: Globe,
-};
+} as const;
 
 const typeColors = {
   tithe: 'bg-primary/10 text-primary',
   offering: 'bg-accent/10 text-accent-foreground',
   special: 'bg-chart-4/10 text-chart-4',
   missions: 'bg-chart-5/10 text-chart-5',
-};
+} as const;
 
 const OfferingRecords = () => {
   const [filterType, setFilterType] = useState('all');
   const [showAddForm, setShowAddForm] = useState(false);
 
+  const [formType, setFormType] = useState('');
+  const [formAmount, setFormAmount] = useState('');
+  const [formService, setFormService] = useState('');
+  const [formDate, setFormDate] = useState('');
+
+  const { data: offerings = [], isLoading } = useOfferings();
+  const { mutateAsync: createOffering, isPending } = useCreateOffering();
+
   const totalByType = (['tithe', 'offering', 'special', 'missions'] as const).map(type => ({
     type,
     label: type.charAt(0).toUpperCase() + type.slice(1),
-    total: offerings.filter(o => o.type === type).reduce((s, o) => s + o.amount, 0),
+    total: offerings.filter(o => o.type === type).reduce((s, o) => s + Number(o.amount), 0),
     count: offerings.filter(o => o.type === type).length,
   }));
 
-  const grandTotal = offerings.reduce((s, o) => s + o.amount, 0);
+  const grandTotal = offerings.reduce((s, o) => s + Number(o.amount), 0);
   const filtered = filterType === 'all' ? offerings : offerings.filter(o => o.type === filterType);
+
+  const handleSubmit = async () => {
+    if (!formType || !formAmount || !formDate) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    try {
+      await createOffering({
+        type: formType,
+        amount: formAmount,
+        service: formService,
+        date: formDate,
+        recordedBy: 'Admin',
+      });
+      toast.success('Offering recorded successfully');
+      setFormType('');
+      setFormAmount('');
+      setFormService('');
+      setFormDate('');
+      setShowAddForm(false);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to record offering');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -79,22 +120,43 @@ const OfferingRecords = () => {
           <h3 className="text-sm font-semibold mb-3">Record Offering/Tithe</h3>
           <div className="grid sm:grid-cols-2 gap-3">
             <div className="relative">
-              <select className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
+              <select
+                value={formType}
+                onChange={e => setFormType(e.target.value)}
+                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
                 <option value="">Type</option>
                 <option value="tithe">Tithe</option>
                 <option value="offering">Offering</option>
                 <option value="special">Special Offering</option>
                 <option value="missions">Missions</option>
               </select>
-              <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             </div>
-            <input placeholder="Amount (KES)" type="number" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-            <input placeholder="Service/Event" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-            <input type="date" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+            <input
+              placeholder="Amount (KES)"
+              type="number"
+              value={formAmount}
+              onChange={e => setFormAmount(e.target.value)}
+              className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+            <input
+              placeholder="Service/Event"
+              value={formService}
+              onChange={e => setFormService(e.target.value)}
+              className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+            <input
+              type="date"
+              value={formDate}
+              onChange={e => setFormDate(e.target.value)}
+              className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
           </div>
           <div className="flex justify-end gap-2 mt-4">
             <button onClick={() => setShowAddForm(false)} className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:bg-muted transition-colors">Cancel</button>
-            <button className="px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium">Save Record</button>
+            <button
+              onClick={handleSubmit}
+              disabled={isPending}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium disabled:opacity-60">
+              {isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              Save Record
+            </button>
           </div>
         </motion.div>
       )}
@@ -126,17 +188,19 @@ const OfferingRecords = () => {
             </thead>
             <tbody>
               {filtered.map(o => {
-                const Icon = typeIcons[o.type];
+                const type = o.type as keyof typeof typeIcons;
+                const Icon = typeIcons[type] ?? DollarSign;
+                const colorClass = typeColors[type] ?? 'bg-muted text-muted-foreground';
                 return (
                   <tr key={o.id} className="border-t border-border hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-3 text-xs">{new Date(o.date).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${typeColors[o.type]}`}>
+                      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${colorClass}`}>
                         <Icon className="w-2.5 h-2.5" /> {o.type}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{o.service}</td>
-                    <td className="px-4 py-3 text-xs text-right font-bold">KES {o.amount.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-right font-bold">KES {Number(o.amount).toLocaleString()}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{o.recordedBy}</td>
                   </tr>
                 );
