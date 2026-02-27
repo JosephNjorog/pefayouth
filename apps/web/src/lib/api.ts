@@ -67,6 +67,8 @@ export const updateEvent = (id: string, data: Partial<ChurchEvent>) =>
   apiFetch<ChurchEvent>(`/api/events/${id}`, { method: 'PUT', body: JSON.stringify(data) });
 export const deleteEvent = (id: string) =>
   apiFetch(`/api/events/${id}`, { method: 'DELETE' });
+export const registerForEvent = (id: string) =>
+  apiFetch<{ message: string }>(`/api/events/${id}/register`, { method: 'POST' });
 
 // ─── Attendance ───────────────────────────────────────────────────────────────
 export interface AttendanceRecord {
