@@ -106,13 +106,6 @@ const Login = () => {
               </button>
             </form>
 
-            <div className="mt-5 p-4 bg-muted rounded-xl text-xs text-muted-foreground space-y-1">
-              <p className="font-semibold text-foreground mb-2">Default accounts:</p>
-              <p><span className="font-medium">Member:</span> grace@pefayouth.org / member123</p>
-              <p><span className="font-medium">Admin:</span> admin@pefayouth.org / admin123</p>
-              <p><span className="font-medium">Finance:</span> finance@pefayouth.org / finance123</p>
-              <p><span className="font-medium">Secretary:</span> secretary@pefayouth.org / secretary123</p>
-            </div>
           </div>
         </div>
       </motion.div>
