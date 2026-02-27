@@ -156,7 +156,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
               <h4 className="text-sm font-semibold mb-3">Contact Us</h4>
               <ul className="space-y-2 text-sm text-primary-foreground/60">
                 <li>Pefa Church, Kajiado</li>
-                <li>info@youthconnect.church</li>
+                <li>info@pefayouth.org</li>
                 <li>+254 700 000 000</li>
               </ul>
             </div>
