@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEvent } from '@/hooks/useApi';
+import { useEvent, useRegisterForEvent } from '@/hooks/useApi';
 import { ArrowLeft, MapPin, Clock, Users, CheckCircle, Loader2 } from 'lucide-react';
 import PaymentModal from '@/components/PaymentModal';
+import { toast } from 'sonner';
 
 const EventDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { data: event, isLoading, isError } = useEvent(id);
+  const registerForEvent = useRegisterForEvent();
 
   const [rsvpd, setRsvpd] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -30,11 +32,17 @@ const EventDetail = () => {
     );
   }
 
-  const handleRSVP = () => {
+  const handleRSVP = async () => {
     if (event.isPaid) {
       setShowPayment(true);
     } else {
-      setRsvpd(true);
+      try {
+        await registerForEvent.mutateAsync(event.id);
+        setRsvpd(true);
+        toast.success("You're registered! See you there.");
+      } catch (err: any) {
+        toast.error(err.message || 'Registration failed. Please try again.');
+      }
     }
   };
 
@@ -44,22 +52,16 @@ const EventDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="relative max-w-3xl mx-auto">
         <div className={`h-48 lg:h-56 lg:rounded-b-2xl ${event.isPaid ? 'gradient-gold' : 'gradient-primary'} flex items-end`}>
           <div className="absolute top-4 left-4">
-            <button
-              onClick={() => navigate(-1)}
-              className="w-9 h-9 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center text-primary-foreground"
-            >
+            <button onClick={() => navigate(-1)} className="w-9 h-9 rounded-full bg-foreground/10 backdrop-blur-sm flex items-center justify-center text-primary-foreground">
               <ArrowLeft className="w-4 h-4" />
             </button>
           </div>
           <div className="w-full p-5 pb-0">
             <div className="bg-card rounded-t-2xl px-5 pt-5">
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground capitalize">
-                {event.type}
-              </span>
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground capitalize">{event.type}</span>
             </div>
           </div>
         </div>
@@ -72,31 +74,22 @@ const EventDetail = () => {
 
           <div className="space-y-3 mb-5">
             <div className="flex items-center gap-3 text-sm">
-              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4 text-primary" />
-              </div>
+              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0"><Clock className="w-4 h-4 text-primary" /></div>
               <div>
                 <p className="font-medium">{new Date(event.date).toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
                 <p className="text-xs text-muted-foreground">{event.time}</p>
               </div>
             </div>
             <div className="flex items-center gap-3 text-sm">
-              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                <MapPin className="w-4 h-4 text-primary" />
-              </div>
+              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0"><MapPin className="w-4 h-4 text-primary" /></div>
               <p className="font-medium">{event.location}</p>
             </div>
             <div className="flex items-center gap-3 text-sm">
-              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0">
-                <Users className="w-4 h-4 text-primary" />
-              </div>
+              <div className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center shrink-0"><Users className="w-4 h-4 text-primary" /></div>
               <div className="flex-1">
                 <p className="font-medium">{event.registered} / {event.capacity} registered</p>
                 <div className="w-full h-1.5 bg-muted rounded-full mt-1.5 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-primary transition-all"
-                    style={{ width: `${progress}%` }}
-                  />
+                  <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${Math.min(progress, 100)}%` }} />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">{spotsLeft} spots left</p>
               </div>
@@ -116,24 +109,27 @@ const EventDetail = () => {
             <div className="bg-secondary rounded-xl p-4 text-center">
               <CheckCircle className="w-8 h-8 text-primary mx-auto mb-2" />
               <p className="text-sm font-semibold text-secondary-foreground">You're registered!</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {event.isPaid ? 'Payment confirmed. See you there!' : "We'll see you there!"}
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">{event.isPaid ? 'Payment confirmed. See you there!' : "We'll see you there!"}</p>
+            </div>
+          ) : spotsLeft <= 0 ? (
+            <div className="bg-muted rounded-xl p-4 text-center">
+              <p className="text-sm font-semibold text-muted-foreground">Event is fully booked</p>
             </div>
           ) : (
             <button
               onClick={handleRSVP}
-              className={`w-full py-3.5 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] text-primary-foreground ${
-                event.isPaid ? 'gradient-gold text-accent-foreground shadow-gold' : 'gradient-primary shadow-church'
+              disabled={registerForEvent.isPending}
+              className={`w-full py-3.5 rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-70 ${
+                event.isPaid ? 'gradient-gold text-accent-foreground shadow-gold' : 'gradient-primary text-primary-foreground shadow-church'
               }`}
             >
-              {event.isPaid ? `Pay & Register - KES ${price.toLocaleString()}` : 'RSVP - Free Event'}
+              {registerForEvent.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+              {event.isPaid ? `Pay & Register — KES ${price.toLocaleString()}` : 'RSVP — Free Event'}
             </button>
           )}
         </div>
       </div>
 
-      {/* Payment Modal - rendered via portal */}
       {event.isPaid && (
         <PaymentModal
           show={showPayment}
