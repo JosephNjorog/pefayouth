@@ -30,6 +30,16 @@ const OfferingRecords = () => {
   const { data: offerings = [], isLoading } = useOfferings();
   const { mutateAsync: createOffering, isPending } = useCreateOffering();
 
+  const exportCSV = () => {
+    const rows = [['Date', 'Type', 'Service', 'Amount (KES)', 'Recorded By']];
+    filtered.forEach(o => rows.push([o.date, o.type, o.service || '', String(Number(o.amount)), o.recordedBy]));
+    const csv = rows.map(r => r.map(v => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `offerings-${new Date().toISOString().split('T')[0]}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const totalByType = (['tithe', 'offering', 'special', 'missions'] as const).map(type => ({
     type,
     label: type.charAt(0).toUpperCase() + type.slice(1),
@@ -80,8 +90,8 @@ const OfferingRecords = () => {
           <p className="text-sm text-muted-foreground mt-1">Record and track all church contributions</p>
         </div>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors">
-            <Download className="w-4 h-4" /> Export
+          <button onClick={exportCSV} className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors">
+            <Download className="w-4 h-4" /> Export CSV
           </button>
           <button onClick={() => setShowAddForm(!showAddForm)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-primary-foreground text-sm font-medium shadow-church">
