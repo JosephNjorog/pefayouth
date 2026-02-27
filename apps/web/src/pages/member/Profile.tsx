@@ -1,11 +1,17 @@
-import { useMember } from '@/hooks/useApi';
+import { useState } from 'react';
+import { useMember, useUpdateMember } from '@/hooks/useApi';
 import { useAuth } from '@/contexts/AuthContext';
-import { User, Phone, Mail, Users, Church, Calendar, Edit, Loader2 } from 'lucide-react';
+import { User, Phone, Mail, Users, Church, Calendar, Edit, Loader2, X, Save } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 const Profile = () => {
   const { user } = useAuth();
   const { data: member, isLoading } = useMember(user?.memberId);
+  const updateMember = useUpdateMember();
+  const [editing, setEditing] = useState(false);
+  const [editPhone, setEditPhone] = useState('');
+  const [editEmail, setEditEmail] = useState('');
 
   if (isLoading) {
     return (
@@ -25,13 +31,28 @@ const Profile = () => {
       ? `${Math.round((presentCount / attendanceHistory.length) * 100)}%`
       : '0%';
 
+  const startEdit = () => {
+    setEditPhone(member?.phone || '');
+    setEditEmail(member?.email || user?.email || '');
+    setEditing(true);
+  };
+
+  const handleSave = async () => {
+    if (!user?.memberId) return;
+    try {
+      await updateMember.mutateAsync({ id: user.memberId, data: { phone: editPhone, email: editEmail } });
+      toast.success('Profile updated successfully');
+      setEditing(false);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update profile');
+    }
+  };
+
   return (
     <div className="px-4 lg:px-6 py-5 lg:py-8 space-y-5">
-      {/* Desktop: Two-column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column: Profile header + Stats */}
         <div className="space-y-5">
-          {/* Profile Header */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -44,13 +65,19 @@ const Profile = () => {
             </div>
             <h1 className="text-lg font-bold">{memberName}</h1>
             <p className="text-sm text-muted-foreground">{member?.ministry ?? ''}</p>
-            <button className="inline-flex items-center gap-1.5 mt-3 px-4 py-2 rounded-xl border border-border text-xs font-medium text-muted-foreground hover:bg-muted transition-colors">
-              <Edit className="w-3 h-3" />
-              Edit Profile
-            </button>
+            {!editing ? (
+              <button onClick={startEdit} className="inline-flex items-center gap-1.5 mt-3 px-4 py-2 rounded-xl border border-border text-xs font-medium text-muted-foreground hover:bg-muted transition-colors">
+                <Edit className="w-3 h-3" />
+                Edit Profile
+              </button>
+            ) : (
+              <button onClick={() => setEditing(false)} className="inline-flex items-center gap-1.5 mt-3 px-4 py-2 rounded-xl border border-border text-xs font-medium text-muted-foreground hover:bg-muted transition-colors">
+                <X className="w-3 h-3" />
+                Cancel
+              </button>
+            )}
           </motion.div>
 
-          {/* Stats */}
           <div className="grid grid-cols-3 gap-3">
             {[
               { label: 'Attendance', value: attendanceRate, color: 'bg-secondary' },
@@ -73,6 +100,39 @@ const Profile = () => {
 
         {/* Right column: Info + Attendance */}
         <div className="lg:col-span-2 space-y-5">
+          {/* Edit Form */}
+          {editing && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl border border-border shadow-sm p-5">
+              <h2 className="text-sm font-semibold mb-3">Edit Contact Info</h2>
+              <p className="text-xs text-muted-foreground mb-4">You can update your phone number and email address. Contact your secretary to update other details.</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[11px] text-muted-foreground mb-1 block">Phone Number</label>
+                  <div className="relative">
+                    <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input value={editPhone} onChange={e => setEditPhone(e.target.value)} placeholder="+254 7xx xxx xxx" type="tel"
+                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[11px] text-muted-foreground mb-1 block">Email Address</label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input value={editEmail} onChange={e => setEditEmail(e.target.value)} placeholder="you@email.com" type="email"
+                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+                  </div>
+                </div>
+                <div className="flex justify-end pt-1">
+                  <button onClick={handleSave} disabled={updateMember.isPending}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium">
+                    {updateMember.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* Info Cards */}
           <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
             <h2 className="text-sm font-semibold px-4 pt-4 pb-2">Personal Information</h2>

@@ -190,8 +190,18 @@ async function memberById(req: VercelRequest, res: VercelResponse, id: string) {
     return ok(res, { ...member, attendanceHistory: history });
   }
   if (req.method === 'PUT') {
-    const user = await requireRole(req, res, ['super_admin', 'secretary']);
+    const user = await requireAuth(req, res);
     if (!user) return;
+    // Members can only update their own phone/email
+    if (user.role === 'member') {
+      if (user.memberId !== id) return err(res, 'Forbidden', 403);
+      const { phone, email } = req.body || {};
+      const [updated] = await db.update(members).set({ phone, email, updatedAt: new Date() }).where(eq(members.id, id)).returning();
+      if (!updated) return err(res, 'Member not found', 404);
+      return ok(res, updated);
+    }
+    // Admins can update all fields
+    if (!['super_admin', 'secretary'].includes(user.role)) return err(res, 'Forbidden', 403);
     const { name, phone, email, ministry, cellGroup, joinedDate, attendanceRate } = req.body || {};
     const [updated] = await db.update(members).set({ name, phone, email, ministry, cellGroup, joinedDate, attendanceRate, updatedAt: new Date() }).where(eq(members.id, id)).returning();
     if (!updated) return err(res, 'Member not found', 404);
