@@ -40,7 +40,7 @@ const AdminDashboard = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Super Admin Dashboard</h1>
-        <p className="text-sm text-muted-foreground mt-1">Complete overview of YouthConnect operations</p>
+        <p className="text-sm text-muted-foreground mt-1">Complete overview of PEFA Youth operations</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
