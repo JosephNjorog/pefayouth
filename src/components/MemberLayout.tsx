@@ -25,7 +25,7 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
               <Church className="w-5 h-5 text-accent-foreground" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-primary">YouthConnect</h2>
+              <h2 className="text-sm font-bold text-primary">PEFA Youth</h2>
               <p className="text-xs text-muted-foreground">Member Portal</p>
             </div>
           </div>
@@ -88,7 +88,7 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="flex items-center gap-3">
               {/* Mobile logo */}
               <div className="lg:hidden">
-                <h2 className="text-sm font-semibold text-primary">YouthConnect</h2>
+                <h2 className="text-sm font-semibold text-primary">PEFA Youth</h2>
                 <p className="text-xs text-muted-foreground">Welcome, {user?.name?.split(' ')[0]}</p>
               </div>
               {/* Desktop breadcrumb-style */}
