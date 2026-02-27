@@ -94,8 +94,8 @@ const ExpenseTracking = () => {
           <p className="text-sm text-muted-foreground mt-1">Record and monitor all operational costs</p>
         </div>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors">
-            <Download className="w-4 h-4" /> Export
+          <button onClick={exportCSV} className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors">
+            <Download className="w-4 h-4" /> Export CSV
           </button>
           <button onClick={() => setShowAddForm(!showAddForm)}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl gradient-primary text-primary-foreground text-sm font-medium shadow-church">
