@@ -1,4 +1,4 @@
-# YouthConnect — PEFA Youth Church Management System
+# PEFA Youth Church Kajiado — Management System
 
 A modern youth church management platform built for PEFA Youth, enabling members, secretaries, finance admins, and pastors to manage attendance, events, media, finances, and communications.
 
