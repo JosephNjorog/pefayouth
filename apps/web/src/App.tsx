@@ -33,10 +33,19 @@ import MemberManagement from "./pages/admin/MemberManagement";
 import Newsletters from "./pages/admin/Newsletters";
 import EventManagement from "./pages/admin/EventManagement";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
+});
+
+const Spinner = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+  </div>
+);
 
 const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: string[] }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
+  if (loading) return <Spinner />;
   if (!isAuthenticated || !user) return <Navigate to="/login" replace />;
   if (!allowedRoles.includes(user.role)) {
     return <Navigate to={isAdminRole(user.role) ? '/admin' : '/member'} replace />;
@@ -45,7 +54,8 @@ const ProtectedRoute = ({ children, allowedRoles }: { children: React.ReactNode;
 };
 
 const LoginRoute = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
+  if (loading) return <Spinner />;
   if (isAuthenticated && user) {
     return <Navigate to={isAdminRole(user.role) ? '/admin' : '/member'} replace />;
   }
