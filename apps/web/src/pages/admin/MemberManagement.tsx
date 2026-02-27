@@ -151,11 +151,18 @@ const MemberManagement = () => {
         </motion.div>
       )}
 
-      {selectedMember && (
+      {selectedMember && !editMemberId && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-card rounded-xl border border-border p-5 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold">Member Details</h3>
-            <button onClick={() => setViewMemberId(null)} className="text-xs text-muted-foreground hover:text-foreground">Close</button>
+            <div className="flex items-center gap-2">
+              <button onClick={() => startEdit(selectedMember)} className="flex items-center gap-1 text-xs text-primary hover:underline">
+                <Edit className="w-3 h-3" /> Edit
+              </button>
+              <button onClick={() => setViewMemberId(null)} className="text-xs text-muted-foreground hover:text-foreground ml-2">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-lg font-bold shrink-0">
@@ -171,6 +178,43 @@ const MemberManagement = () => {
               {selectedMember.joinedDate && <div><p className="text-[10px] text-muted-foreground">Joined</p><p className="text-sm font-medium">{new Date(selectedMember.joinedDate).toLocaleDateString('en', { month: 'long', day: 'numeric', year: 'numeric' })}</p></div>}
             </div>
           </div>
+        </motion.div>
+      )}
+
+      {editingMember && editMemberId && (
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="bg-card rounded-xl border border-border p-5 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold">Edit Member — {editingMember.name}</h3>
+            <button onClick={() => setEditMemberId(null)} className="text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
+          </div>
+          <form onSubmit={handleUpdate}>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <input required value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))} placeholder="Full Name *" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+              <input value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} placeholder="Phone Number" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+              <input value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} placeholder="Email Address" type="email" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+              <input type="date" value={editForm.joinedDate} onChange={e => setEditForm(f => ({ ...f, joinedDate: e.target.value }))} className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+              <div className="relative">
+                <select value={editForm.ministry} onChange={e => setEditForm(f => ({ ...f, ministry: e.target.value }))} className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
+                  <option value="">Select Ministry</option>
+                  {ministries.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+                <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              </div>
+              <div className="relative">
+                <select value={editForm.cellGroup} onChange={e => setEditForm(f => ({ ...f, cellGroup: e.target.value }))} className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
+                  <option value="">Select Cell Group</option>
+                  {cellGroups.map(g => <option key={g} value={g}>{g}</option>)}
+                </select>
+                <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button type="button" onClick={() => setEditMemberId(null)} className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:bg-muted transition-colors">Cancel</button>
+              <button type="submit" disabled={updateMember.isPending} className="px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium flex items-center gap-2">
+                {updateMember.isPending && <Loader2 className="w-3 h-3 animate-spin" />} Save Changes
+              </button>
+            </div>
+          </form>
         </motion.div>
       )}
 
@@ -248,9 +292,17 @@ const MemberManagement = () => {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <button onClick={() => setViewMemberId(member.id)} className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
-                      <Eye className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex items-center justify-center gap-1">
+                      <button onClick={() => { setViewMemberId(member.id); setEditMemberId(null); }} className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground" title="View">
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={() => startEdit(member)} className="p-1.5 rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-primary" title="Edit">
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={() => handleDelete(member.id, member.name)} className="p-1.5 rounded-lg hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive" title="Delete">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
