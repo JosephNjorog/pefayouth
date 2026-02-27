@@ -20,8 +20,15 @@ const FinanceDashboard = () => {
   const totalSpent = budgetItems.reduce((s, b) => s + Number(b.spent), 0);
   const netIncome = totalEventRevenue + totalOfferings - totalExpenses;
 
+  const lastMonthIncome = financialSummary.length > 0 ? Number(financialSummary[financialSummary.length - 1].income) : 0;
+  const prevMonthIncome = financialSummary.length > 1 ? Number(financialSummary[financialSummary.length - 2].income) : 0;
+  const incomeUp = lastMonthIncome >= prevMonthIncome;
+  const incomeChangeLabel = prevMonthIncome > 0
+    ? `${incomeUp ? '+' : ''}${Math.round(((lastMonthIncome - prevMonthIncome) / prevMonthIncome) * 100)}% vs last month`
+    : 'Events & offerings total';
+
   const statCards = [
-    { label: 'Total Income', value: `KES ${((totalEventRevenue + totalOfferings) / 1000).toFixed(0)}K`, icon: TrendingUp, change: '+12% vs last month', up: true, color: 'bg-primary/10 text-primary' },
+    { label: 'Total Income', value: `KES ${((totalEventRevenue + totalOfferings) / 1000).toFixed(0)}K`, icon: TrendingUp, change: incomeChangeLabel, up: incomeUp, color: 'bg-primary/10 text-primary' },
     { label: 'Total Expenses', value: `KES ${(totalExpenses / 1000).toFixed(0)}K`, icon: TrendingDown, change: 'Within budget', up: false, color: 'bg-destructive/10 text-destructive' },
     { label: 'Net Balance', value: `KES ${(netIncome / 1000).toFixed(0)}K`, icon: Wallet, change: 'Current period', up: true, color: 'bg-secondary text-secondary-foreground' },
     { label: 'Budget Utilization', value: totalBudget > 0 ? `${Math.round((totalSpent / totalBudget) * 100)}%` : '0%', icon: DollarSign, change: `KES ${((totalBudget - totalSpent) / 1000).toFixed(0)}K remaining`, up: true, color: 'bg-accent/10 text-accent-foreground' },

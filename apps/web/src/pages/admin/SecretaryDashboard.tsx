@@ -1,6 +1,7 @@
 import { useMembers, useEvents, useAttendance, useNewsletters } from '@/hooks/useApi';
 import { Users, Calendar, FileText, Newspaper, Film, TrendingUp, UserPlus, Bell, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const SecretaryDashboard = () => {
   const { data: members = [], isLoading: membersLoading } = useMembers();
@@ -71,13 +72,13 @@ const SecretaryDashboard = () => {
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
           {quickActions.map(action => (
-            <a key={action.label} href={action.link}
+            <Link key={action.label} to={action.link}
               className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 hover:bg-muted transition-colors group">
               <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                 <action.icon className="w-4 h-4 text-primary" />
               </div>
               <span className="text-sm font-medium">{action.label}</span>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
