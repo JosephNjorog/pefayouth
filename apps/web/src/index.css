@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+@layer base {
+  :root {
+    --background: 40 20% 98%;
+    --foreground: 220 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 12%;
+
+    --primary: 174 42% 32%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 174 25% 92%;
+    --secondary-foreground: 174 42% 22%;
+
+    --muted: 40 15% 94%;
+    --muted-foreground: 220 10% 45%;
+
+    --accent: 38 92% 50%;
+    --accent-foreground: 38 95% 12%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 40 15% 88%;
+    --input: 40 15% 88%;
+    --ring: 174 42% 32%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 174 42% 12%;
+    --sidebar-foreground: 174 10% 92%;
+    --sidebar-primary: 38 92% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 174 30% 20%;
+    --sidebar-accent-foreground: 174 10% 92%;
+    --sidebar-border: 174 30% 22%;
+    --sidebar-ring: 38 92% 50%;
+
+    --church-gold: 38 92% 50%;
+    --church-gold-light: 38 80% 92%;
+    --church-teal: 174 42% 32%;
+    --church-teal-light: 174 30% 90%;
+    --church-teal-dark: 174 42% 12%;
+    --chart-1: 174 42% 32%;
+    --chart-2: 38 92% 50%;
+    --chart-3: 200 60% 45%;
+    --chart-4: 340 65% 50%;
+    --chart-5: 120 40% 45%;
+  }
+
+  .dark {
+    --background: 220 20% 8%;
+    --foreground: 40 15% 95%;
+
+    --card: 220 18% 12%;
+    --card-foreground: 40 15% 95%;
+
+    --popover: 220 18% 12%;
+    --popover-foreground: 40 15% 95%;
+
+    --primary: 174 42% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 174 20% 18%;
+    --secondary-foreground: 174 25% 80%;
+
+    --muted: 220 15% 16%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 38 85% 55%;
+    --accent-foreground: 38 95% 10%;
+
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 174 42% 45%;
+
+    --sidebar-background: 220 20% 6%;
+    --sidebar-foreground: 174 10% 90%;
+    --sidebar-primary: 38 85% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 14%;
+    --sidebar-accent-foreground: 174 10% 90%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 38 85% 55%;
+
+    --church-gold: 38 85% 55%;
+    --church-gold-light: 38 60% 20%;
+    --church-teal: 174 42% 45%;
+    --church-teal-light: 174 25% 18%;
+    --church-teal-dark: 174 42% 8%;
+    --chart-1: 174 42% 45%;
+    --chart-2: 38 85% 55%;
+    --chart-3: 200 55% 55%;
+    --chart-4: 340 60% 55%;
+    --chart-5: 120 35% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/50 shadow-sm;
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(174 42% 22%));
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--church-gold)), hsl(28 85% 45%));
+  }
+
+  .gradient-hero {
+    background: linear-gradient(135deg, hsl(var(--church-teal-dark)), hsl(var(--primary)), hsl(174 50% 40%));
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--church-gold)));
+  }
+
+  .shadow-church {
+    box-shadow: 0 4px 20px -4px hsl(var(--primary) / 0.15);
+  }
+
+  .shadow-gold {
+    box-shadow: 0 4px 20px -4px hsl(var(--church-gold) / 0.25);
+  }
+
+  .animate-fade-up {
+    animation: fadeUp 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .bottom-nav-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+  }
+}
