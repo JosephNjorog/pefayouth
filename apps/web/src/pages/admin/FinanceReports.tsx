@@ -1,10 +1,16 @@
-import { financialSummary, offerings, expenses } from '@/data/adminMockData';
-import { payments } from '@/data/mockData';
-import { FileText, Download, TrendingUp, TrendingDown, DollarSign, Calendar } from 'lucide-react';
+import { useFinanceSummary, useFinanceReports, useOfferings, useExpenses } from '@/hooks/useApi';
+import { FileText, Download, TrendingUp, TrendingDown, DollarSign, Calendar, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 const FinanceReports = () => {
+  const { data: financialSummary = [], isLoading: summaryLoading } = useFinanceSummary();
+  const { data: reports, isLoading: reportsLoading } = useFinanceReports();
+  const { data: offerings = [], isLoading: offeringsLoading } = useOfferings();
+  const { data: expenses = [], isLoading: expensesLoading } = useExpenses();
+
+  const isLoading = summaryLoading || reportsLoading || offeringsLoading || expensesLoading;
+
   const totalIncome = financialSummary.reduce((s, f) => s + f.income, 0);
   const totalExpenses = financialSummary.reduce((s, f) => s + f.expenses, 0);
   const netBalance = totalIncome - totalExpenses;
@@ -17,16 +23,24 @@ const FinanceReports = () => {
   }));
 
   // Income sources breakdown
-  const eventIncome = payments.filter(p => p.status === 'confirmed').reduce((s, p) => s + p.amount, 0);
-  const offeringIncome = offerings.reduce((s, o) => s + o.amount, 0);
-  const totalIncomeAll = eventIncome + offeringIncome;
+  const offeringIncome = offerings.reduce((s, o) => s + Number(o.amount), 0);
+  const eventIncome = reports?.paymentStats?.confirmedTotal ?? 0;
+  const totalIncomeAll = offeringIncome + eventIncome;
 
   // Expense categories summary
   const categoryMap: Record<string, number> = {};
   expenses.filter(e => e.status === 'approved').forEach(e => {
-    categoryMap[e.category] = (categoryMap[e.category] || 0) + e.amount;
+    categoryMap[e.category] = (categoryMap[e.category] || 0) + Number(e.amount);
   });
   const expByCategory = Object.entries(categoryMap).sort((a, b) => b[1] - a[1]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -46,7 +60,7 @@ const FinanceReports = () => {
           { label: 'Total Income', value: `KES ${(totalIncome / 1000).toFixed(0)}K`, icon: TrendingUp, color: 'bg-primary/10 text-primary' },
           { label: 'Total Expenses', value: `KES ${(totalExpenses / 1000).toFixed(0)}K`, icon: TrendingDown, color: 'bg-destructive/10 text-destructive' },
           { label: 'Net Balance', value: `KES ${(netBalance / 1000).toFixed(0)}K`, icon: DollarSign, color: 'bg-secondary text-secondary-foreground' },
-          { label: 'Report Period', value: '5 Months', icon: Calendar, color: 'bg-accent/10 text-accent-foreground' },
+          { label: 'Report Period', value: `${financialSummary.length} Months`, icon: Calendar, color: 'bg-accent/10 text-accent-foreground' },
         ].map((stat, i) => (
           <motion.div key={stat.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
             className="bg-card rounded-xl border border-border p-4 shadow-sm">
@@ -89,9 +103,9 @@ const FinanceReports = () => {
                 <span className="font-bold">KES {offeringIncome.toLocaleString()}</span>
               </div>
               <div className="h-2 bg-muted rounded-full mt-2 overflow-hidden">
-                <div className="h-full bg-primary rounded-full" style={{ width: `${(offeringIncome / totalIncomeAll) * 100}%` }} />
+                <div className="h-full bg-primary rounded-full" style={{ width: `${totalIncomeAll > 0 ? (offeringIncome / totalIncomeAll) * 100 : 0}%` }} />
               </div>
-              <p className="text-[10px] text-muted-foreground mt-1">{Math.round((offeringIncome / totalIncomeAll) * 100)}% of total</p>
+              <p className="text-[10px] text-muted-foreground mt-1">{totalIncomeAll > 0 ? Math.round((offeringIncome / totalIncomeAll) * 100) : 0}% of total</p>
             </div>
             <div className="p-3 bg-muted/30 rounded-xl">
               <div className="flex justify-between text-sm">
@@ -99,9 +113,9 @@ const FinanceReports = () => {
                 <span className="font-bold">KES {eventIncome.toLocaleString()}</span>
               </div>
               <div className="h-2 bg-muted rounded-full mt-2 overflow-hidden">
-                <div className="h-full bg-accent rounded-full" style={{ width: `${(eventIncome / totalIncomeAll) * 100}%` }} />
+                <div className="h-full bg-accent rounded-full" style={{ width: `${totalIncomeAll > 0 ? (eventIncome / totalIncomeAll) * 100 : 0}%` }} />
               </div>
-              <p className="text-[10px] text-muted-foreground mt-1">{Math.round((eventIncome / totalIncomeAll) * 100)}% of total</p>
+              <p className="text-[10px] text-muted-foreground mt-1">{totalIncomeAll > 0 ? Math.round((eventIncome / totalIncomeAll) * 100) : 0}% of total</p>
             </div>
           </div>
         </div>
@@ -141,7 +155,7 @@ const FinanceReports = () => {
             </thead>
             <tbody>
               {financialSummary.map(f => {
-                const margin = Math.round(((f.income - f.expenses) / f.income) * 100);
+                const margin = f.income > 0 ? Math.round(((f.income - f.expenses) / f.income) * 100) : 0;
                 return (
                   <tr key={f.month} className="border-t border-border hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-3 text-xs font-medium">{f.month}</td>
@@ -161,7 +175,7 @@ const FinanceReports = () => {
                 <td className="px-4 py-3 text-xs text-right text-primary">KES {totalIncome.toLocaleString()}</td>
                 <td className="px-4 py-3 text-xs text-right text-destructive">KES {totalExpenses.toLocaleString()}</td>
                 <td className="px-4 py-3 text-xs text-right font-bold">KES {netBalance.toLocaleString()}</td>
-                <td className="px-4 py-3 text-xs text-center">{Math.round((netBalance / totalIncome) * 100)}%</td>
+                <td className="px-4 py-3 text-xs text-center">{totalIncome > 0 ? Math.round((netBalance / totalIncome) * 100) : 0}%</td>
               </tr>
             </tbody>
           </table>
