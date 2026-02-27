@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { events } from '@/data/mockData';
-import { ChevronLeft, ChevronRight, MapPin, Clock, Users } from 'lucide-react';
+import { useEvents } from '@/hooks/useApi';
+import { ChevronLeft, ChevronRight, MapPin, Clock, Users, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const typeColors: Record<string, string> = {
@@ -14,8 +14,10 @@ const typeColors: Record<string, string> = {
 };
 
 const Events = () => {
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1, 1));
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [filter, setFilter] = useState<string>('all');
+
+  const { data: events = [], isLoading } = useEvents();
 
   const month = currentMonth.getMonth();
   const year = currentMonth.getFullYear();
@@ -33,10 +35,19 @@ const Events = () => {
   const firstDay = new Date(year, month, 1).getDay();
   const eventDates = new Set(monthEvents.map(e => new Date(e.date).getDate()));
 
+  const today = new Date();
   const prevMonth = () => setCurrentMonth(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentMonth(new Date(year, month + 1, 1));
 
   const allTypes = [...new Set(events.map(e => e.type))];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 lg:px-6 py-5 lg:py-8 space-y-5">
@@ -68,7 +79,7 @@ const Events = () => {
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1;
                 const hasEvent = eventDates.has(day);
-                const isToday = day === 5 && month === 1 && year === 2026;
+                const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
                 return (
                   <div
                     key={day}
@@ -164,7 +175,7 @@ const Events = () => {
                       </div>
                       {event.isPaid && (
                         <span className="text-sm font-bold text-accent shrink-0 ml-2">
-                          KES {event.price?.toLocaleString()}
+                          KES {Number(event.price ?? 0).toLocaleString()}
                         </span>
                       )}
                     </div>
