@@ -14,7 +14,7 @@ const coreValues = [
 const leadershipTeam = [
   { name: 'Pastor Daniel Mutua', role: 'Senior Youth Pastor', description: 'Leading our youth ministry with vision and passion for over 10 years.' },
   { name: 'Rev. Mary Wambui', role: 'Associate Pastor', description: 'Guiding spiritual growth and discipleship programs for young believers.' },
-  { name: 'Bishop James Karanja', role: 'Founding Pastor', description: 'The visionary behind YouthConnect, championing youth empowerment since 2015.' },
+  { name: 'Bishop James Karanja', role: 'Founding Pastor', description: 'The visionary behind PEFA Youth, championing youth empowerment since 2015.' },
 ];
 
 const About = () => {
@@ -28,7 +28,7 @@ const About = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">About YouthConnect</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">About PEFA Youth</h1>
             <p className="text-primary-foreground/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
               We are a vibrant community of young believers passionate about knowing God, growing in faith, and making a difference in the world around us.
             </p>
@@ -48,7 +48,7 @@ const About = () => {
               <h2 className="text-2xl sm:text-3xl font-bold mb-4">Who We Are</h2>
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  YouthConnect is the youth ministry arm of our church, dedicated to raising a generation that knows Christ and walks in His purpose. Founded in 2015, we have grown from a small group of 20 young people to a thriving community of over 200 members.
+                  PEFA Youth is the youth ministry arm of our church, dedicated to raising a generation that knows Christ and walks in His purpose. Founded in 2015, we have grown from a small group of 20 young people to a thriving community of over 200 members.
                 </p>
                 <p>
                   We meet every Sunday for worship, have weekly fellowship gatherings on Fridays, and organize life-changing retreats and camps throughout the year. Our cell groups provide intimate spaces for discipleship and accountability.

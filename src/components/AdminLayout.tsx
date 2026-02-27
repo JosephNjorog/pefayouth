@@ -111,7 +111,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               <Church className="w-5 h-5 text-accent" />
             </div>
             <div>
-              <h1 className="font-bold text-lg">YouthConnect</h1>
+              <h1 className="font-bold text-lg">PEFA Youth</h1>
               <p className="text-[10px] opacity-70">{roleLabels[user?.role || 'super_admin']}</p>
             </div>
           </div>
@@ -150,7 +150,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <Menu className="w-5 h-5" />
               </button>
               <div>
-                <h2 className="text-sm font-semibold text-primary">YouthConnect</h2>
+                <h2 className="text-sm font-semibold text-primary">PEFA Youth</h2>
                 <p className="text-[10px] text-muted-foreground">{roleLabels[user?.role || 'super_admin']}</p>
               </div>
             </div>
@@ -172,7 +172,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3">
                     <Church className="w-6 h-6 text-accent" />
-                    <span className="font-bold">YouthConnect</span>
+                    <span className="font-bold">PEFA Youth</span>
                   </div>
                   <button onClick={() => setMobileMenuOpen(false)} className="p-1"><X className="w-5 h-5" /></button>
                 </div>

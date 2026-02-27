@@ -46,7 +46,7 @@ const Home = () => {
             className="max-w-2xl"
           >
             <Badge className="bg-accent/20 text-accent border-accent/30 mb-4 text-xs">
-              Welcome to YouthConnect
+              Welcome to PEFA Youth
             </Badge>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground leading-tight mb-4">
               Empowering Youth Through{' '}
