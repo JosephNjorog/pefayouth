@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Users, Search, UserPlus, ChevronDown, Eye, Loader2 } from 'lucide-react';
+import { Users, Search, UserPlus, ChevronDown, Eye, Loader2, Edit, Trash2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useMembers, useCreateMember } from '@/hooks/useApi';
+import { useMembers, useCreateMember, useUpdateMember, useDeleteMember } from '@/hooks/useApi';
 import { toast } from 'sonner';
 
 const ministries = ['Worship Team', 'Ushering', 'Media Team', 'Hospitality', 'Choir', 'Prayer Team', 'Youth Outreach'];
