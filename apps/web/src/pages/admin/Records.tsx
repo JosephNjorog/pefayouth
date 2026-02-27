@@ -217,21 +217,47 @@ const Records = () => {
                 animate={{ opacity: 1 }}
                 className="px-4 pb-4"
               >
-                <div className="bg-muted/50 rounded-xl p-4 text-sm leading-relaxed text-muted-foreground">
-                  {note.content}
-                </div>
-                <div className="flex justify-end gap-2 mt-3">
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:bg-muted transition-colors">
-                    <Edit className="w-3 h-3" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(note.id)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 transition-colors">
-                    <Trash2 className="w-3 h-3" />
-                    Delete
-                  </button>
-                </div>
+                {editingId === note.id ? (
+                  <div className="space-y-2">
+                    <input
+                      value={editTitle}
+                      onChange={e => setEditTitle(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    />
+                    <textarea
+                      rows={4}
+                      value={editContent}
+                      onChange={e => setEditContent(e.target.value)}
+                      className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring/20"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <button onClick={() => setEditingId(null)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:bg-muted transition-colors">
+                        <X className="w-3 h-3" /> Cancel
+                      </button>
+                      <button onClick={handleUpdate} disabled={updating} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs gradient-primary text-primary-foreground disabled:opacity-60">
+                        {updating && <Loader2 className="w-3 h-3 animate-spin" />} Save
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="bg-muted/50 rounded-xl p-4 text-sm leading-relaxed text-muted-foreground">
+                      {note.content}
+                    </div>
+                    <div className="flex justify-end gap-2 mt-3">
+                      <button onClick={() => startEdit(note)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:bg-muted transition-colors">
+                        <Edit className="w-3 h-3" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(note.id)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 transition-colors">
+                        <Trash2 className="w-3 h-3" />
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                )}
               </motion.div>
             )}
           </motion.div>
