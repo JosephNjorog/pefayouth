@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Phone, CheckCircle, Loader2, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useInitiateStkPush, usePayment } from '@/hooks/useApi';
+import { toast } from 'sonner';
 
 type PaymentStep = 'details' | 'phone' | 'processing' | 'success' | 'failed';
 
@@ -11,29 +13,90 @@ interface PaymentModalProps {
   onSuccess: () => void;
   eventTitle: string;
   price: number;
+  eventId: string;
 }
 
-const PaymentModal = ({ show, onClose, onSuccess, eventTitle, price }: PaymentModalProps) => {
+const PaymentModal = ({ show, onClose, onSuccess, eventTitle, price, eventId }: PaymentModalProps) => {
   const [paymentStep, setPaymentStep] = useState<PaymentStep>('details');
   const [phoneNumber, setPhoneNumber] = useState('+254 ');
+  const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [pollCount, setPollCount] = useState(0);
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const handleSTKPush = () => {
-    if (phoneNumber.replace(/\s/g, '').length < 12) return;
-    setPaymentStep('processing');
-    setTimeout(() => {
-      const success = Math.random() > 0.2;
-      setPaymentStep(success ? 'success' : 'failed');
-      if (success) onSuccess();
-    }, 3000);
+  const { mutateAsync: initiateStkPush, isPending: stkLoading } = useInitiateStkPush();
+  const { data: paymentData, refetch: refetchPayment } = usePayment(paymentId ?? undefined);
+
+  // Poll for payment status when processing
+  useEffect(() => {
+    if (paymentStep === 'processing' && paymentId) {
+      pollIntervalRef.current = setInterval(async () => {
+        setPollCount(c => c + 1);
+        try {
+          const result = await refetchPayment();
+          const payment = result.data;
+          if (payment) {
+            if (payment.status === 'confirmed') {
+              clearInterval(pollIntervalRef.current!);
+              setPaymentStep('success');
+              onSuccess();
+            } else if (payment.status === 'failed' || payment.status === 'cancelled') {
+              clearInterval(pollIntervalRef.current!);
+              setPaymentStep('failed');
+            }
+          }
+        } catch {
+          // Continue polling on error
+        }
+      }, 3000);
+    }
+
+    return () => {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+    };
+  }, [paymentStep, paymentId]);
+
+  // Stop polling after 60 seconds (20 polls at 3s intervals)
+  useEffect(() => {
+    if (pollCount >= 20 && paymentStep === 'processing') {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
+      setPaymentStep('failed');
+    }
+  }, [pollCount, paymentStep]);
+
+  const handleSTKPush = async () => {
+    const cleaned = phoneNumber.replace(/\s/g, '');
+    if (cleaned.length < 12) {
+      toast.error('Please enter a valid phone number');
+      return;
+    }
+    try {
+      setPaymentStep('processing');
+      const result = await initiateStkPush({
+        phone: cleaned,
+        amount: price,
+        eventId,
+        eventTitle,
+      });
+      setPaymentId(result.paymentId);
+      setPollCount(0);
+    } catch (err: unknown) {
+      setPaymentStep('failed');
+      toast.error(err instanceof Error ? err.message : 'Failed to initiate payment');
+    }
   };
 
   const handleClose = () => {
     if (paymentStep === 'details' || paymentStep === 'success' || paymentStep === 'failed') {
+      if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
       setPaymentStep('details');
       setPhoneNumber('+254 ');
+      setPaymentId(null);
+      setPollCount(0);
       onClose();
     }
   };
+
+  const transactionId = paymentData?.transactionId ?? `TXN${Math.floor(Math.random() * 999999)}`;
 
   return createPortal(
     <AnimatePresence>
@@ -100,8 +163,10 @@ const PaymentModal = ({ show, onClose, onSuccess, eventTitle, price }: PaymentMo
                   </p>
                   <button
                     onClick={handleSTKPush}
-                    className="w-full py-3.5 rounded-xl gradient-primary text-primary-foreground font-semibold text-sm shadow-church"
+                    disabled={stkLoading}
+                    className="w-full py-3.5 rounded-xl gradient-primary text-primary-foreground font-semibold text-sm shadow-church flex items-center justify-center gap-2 disabled:opacity-70"
                   >
+                    {stkLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                     Send STK Push
                   </button>
                 </div>
@@ -123,7 +188,7 @@ const PaymentModal = ({ show, onClose, onSuccess, eventTitle, price }: PaymentMo
                   </motion.div>
                   <h3 className="text-lg font-bold mb-1">Payment Successful!</h3>
                   <p className="text-sm text-muted-foreground mb-2">KES {price.toLocaleString()} paid successfully</p>
-                  <p className="text-xs text-muted-foreground mb-6">Transaction ID: TXN{Math.floor(Math.random() * 999999)}</p>
+                  <p className="text-xs text-muted-foreground mb-6">Transaction ID: {transactionId}</p>
                   <button
                     onClick={handleClose}
                     className="w-full py-3 rounded-xl gradient-primary text-primary-foreground font-semibold text-sm"
@@ -139,7 +204,7 @@ const PaymentModal = ({ show, onClose, onSuccess, eventTitle, price }: PaymentMo
                   <h3 className="text-lg font-bold mb-1">Payment Failed</h3>
                   <p className="text-sm text-muted-foreground mb-6">The transaction was not completed. Please try again.</p>
                   <button
-                    onClick={() => setPaymentStep('phone')}
+                    onClick={() => { setPaymentStep('phone'); setPaymentId(null); setPollCount(0); }}
                     className="w-full py-3 rounded-xl gradient-primary text-primary-foreground font-semibold text-sm mb-2"
                   >
                     Try Again
