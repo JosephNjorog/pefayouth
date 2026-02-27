@@ -14,24 +14,6 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    if (!email || !password) { setError('Please fill in all fields'); return; }
-
-    setLoading(true);
-    try {
-      const success = await login(email, password);
-      if (success) {
-        // Navigate based on role returned from server
-        const { user } = await import('@/contexts/AuthContext').then(m => ({ user: null }));
-        // Slight delay to let state settle, then read from context
-        setTimeout(() => navigate(isAdminRole as any), 0);
-      }
-    } catch {}
-    setLoading(false);
-  };
-
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
