@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { budgetItems, expenseCategories } from '@/data/adminMockData';
-import { Wallet, Plus, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react';
+import { useBudget, useCreateBudgetItem } from '@/hooks/useApi';
+import { Wallet, Plus, TrendingUp, AlertTriangle, CheckCircle, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { toast } from 'sonner';
 
 const COLORS = [
   'hsl(var(--primary))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))',
@@ -10,20 +11,62 @@ const COLORS = [
   'hsl(38 70% 60%)', 'hsl(200 50% 55%)', 'hsl(340 55% 55%)', 'hsl(120 30% 50%)',
 ];
 
+const expenseCategories = [
+  'Utilities', 'Salaries', 'Ministry', 'Events', 'Maintenance',
+  'Equipment', 'Outreach', 'Administration', 'Transport', 'Other',
+];
+
 const BudgetPlanning = () => {
   const [showAddForm, setShowAddForm] = useState(false);
-  const totalAllocated = budgetItems.reduce((s, b) => s + b.allocated, 0);
-  const totalSpent = budgetItems.reduce((s, b) => s + b.spent, 0);
+  const [formCategory, setFormCategory] = useState('');
+  const [formAllocated, setFormAllocated] = useState('');
+  const [formPeriod, setFormPeriod] = useState('');
+
+  const { data: budgetItems = [], isLoading } = useBudget();
+  const { mutateAsync: createBudgetItem, isPending } = useCreateBudgetItem();
+
+  const totalAllocated = budgetItems.reduce((s, b) => s + Number(b.allocated), 0);
+  const totalSpent = budgetItems.reduce((s, b) => s + Number(b.spent), 0);
   const remaining = totalAllocated - totalSpent;
-  const utilization = Math.round((totalSpent / totalAllocated) * 100);
+  const utilization = totalAllocated > 0 ? Math.round((totalSpent / totalAllocated) * 100) : 0;
 
-  const overBudget = budgetItems.filter(b => b.spent > b.allocated);
-  const nearLimit = budgetItems.filter(b => (b.spent / b.allocated) > 0.8 && b.spent <= b.allocated);
+  const overBudget = budgetItems.filter(b => Number(b.spent) > Number(b.allocated));
+  const nearLimit = budgetItems.filter(b => (Number(b.spent) / Number(b.allocated)) > 0.8 && Number(b.spent) <= Number(b.allocated));
 
-  const pieData = budgetItems.filter(b => b.allocated > 0).map(b => ({
+  const pieData = budgetItems.filter(b => Number(b.allocated) > 0).map(b => ({
     name: b.category,
-    value: b.allocated,
+    value: Number(b.allocated),
   }));
+
+  const handleSubmit = async () => {
+    if (!formCategory || !formAllocated || !formPeriod) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    try {
+      await createBudgetItem({
+        category: formCategory,
+        allocated: formAllocated,
+        spent: '0',
+        period: formPeriod,
+      });
+      toast.success('Budget item added successfully');
+      setFormCategory('');
+      setFormAllocated('');
+      setFormPeriod('');
+      setShowAddForm(false);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to add budget item');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -63,16 +106,34 @@ const BudgetPlanning = () => {
           className="bg-card rounded-xl border border-border p-5 shadow-sm">
           <h3 className="text-sm font-semibold mb-3">Add Budget Item</h3>
           <div className="grid sm:grid-cols-3 gap-3">
-            <select className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
+            <select
+              value={formCategory}
+              onChange={e => setFormCategory(e.target.value)}
+              className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
               <option value="">Select Category</option>
               {expenseCategories.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
-            <input placeholder="Allocated Amount (KES)" type="number" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-            <input placeholder="Period (e.g. Q1 2026)" className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+            <input
+              placeholder="Allocated Amount (KES)"
+              type="number"
+              value={formAllocated}
+              onChange={e => setFormAllocated(e.target.value)}
+              className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+            <input
+              placeholder="Period (e.g. Q1 2026)"
+              value={formPeriod}
+              onChange={e => setFormPeriod(e.target.value)}
+              className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
           </div>
           <div className="flex justify-end gap-2 mt-4">
             <button onClick={() => setShowAddForm(false)} className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:bg-muted transition-colors">Cancel</button>
-            <button className="px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium">Save</button>
+            <button
+              onClick={handleSubmit}
+              disabled={isPending}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium disabled:opacity-60">
+              {isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              Save
+            </button>
           </div>
         </motion.div>
       )}
@@ -102,7 +163,7 @@ const BudgetPlanning = () => {
                 <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-destructive">{b.category} — Over Budget</p>
-                  <p className="text-xs text-muted-foreground">Spent KES {b.spent.toLocaleString()} of KES {b.allocated.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">Spent KES {Number(b.spent).toLocaleString()} of KES {Number(b.allocated).toLocaleString()}</p>
                 </div>
               </div>
             ))}
@@ -111,7 +172,7 @@ const BudgetPlanning = () => {
                 <AlertTriangle className="w-4 h-4 text-accent-foreground shrink-0" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-accent-foreground">{b.category} — Near Limit</p>
-                  <p className="text-xs text-muted-foreground">{Math.round((b.spent / b.allocated) * 100)}% used · KES {(b.allocated - b.spent).toLocaleString()} left</p>
+                  <p className="text-xs text-muted-foreground">{Math.round((Number(b.spent) / Number(b.allocated)) * 100)}% used · KES {(Number(b.allocated) - Number(b.spent)).toLocaleString()} left</p>
                 </div>
               </div>
             ))}
@@ -143,13 +204,15 @@ const BudgetPlanning = () => {
             </thead>
             <tbody>
               {budgetItems.map(b => {
-                const pct = Math.round((b.spent / b.allocated) * 100);
+                const allocated = Number(b.allocated);
+                const spent = Number(b.spent);
+                const pct = allocated > 0 ? Math.round((spent / allocated) * 100) : 0;
                 return (
                   <tr key={b.id} className="border-t border-border hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-3 text-xs font-medium">{b.category}</td>
-                    <td className="px-4 py-3 text-xs text-right">KES {b.allocated.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-xs text-right font-medium">{b.spent > 0 ? `KES ${b.spent.toLocaleString()}` : '—'}</td>
-                    <td className="px-4 py-3 text-xs text-right text-muted-foreground">KES {(b.allocated - b.spent).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-right">KES {allocated.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-right font-medium">{spent > 0 ? `KES ${spent.toLocaleString()}` : '—'}</td>
+                    <td className="px-4 py-3 text-xs text-right text-muted-foreground">KES {(allocated - spent).toLocaleString()}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2 justify-center">
                         <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
