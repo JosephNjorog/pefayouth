@@ -1,11 +1,71 @@
 import { useState } from 'react';
-import { sermons, galleryItems } from '@/data/mockData';
-import { Upload, Play, Image, Trash2, Plus, Video, Headphones } from 'lucide-react';
+import { useSermons, useCreateSermon, useDeleteSermon, useGallery, useDeleteGalleryItem } from '@/hooks/useApi';
+import { Upload, Play, Image, Trash2, Plus, Video, Headphones, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 const MediaManagement = () => {
   const [tab, setTab] = useState<'sermons' | 'gallery'>('sermons');
   const [showUpload, setShowUpload] = useState(false);
+
+  const [formTitle, setFormTitle] = useState('');
+  const [formSpeaker, setFormSpeaker] = useState('');
+
+  const { data: sermons = [], isLoading: sermonsLoading } = useSermons();
+  const { data: galleryItems = [], isLoading: galleryLoading } = useGallery();
+  const { mutateAsync: createSermon, isPending: creatingSermon } = useCreateSermon();
+  const { mutateAsync: deleteSermon } = useDeleteSermon();
+  const { mutateAsync: deleteGalleryItem } = useDeleteGalleryItem();
+
+  const isLoading = sermonsLoading || galleryLoading;
+
+  const handleUpload = async () => {
+    if (!formTitle) {
+      toast.error('Please provide a title');
+      return;
+    }
+    try {
+      await createSermon({
+        title: formTitle,
+        speaker: formSpeaker || 'Unknown',
+        date: new Date().toISOString().split('T')[0],
+        type: 'audio',
+        duration: '',
+      });
+      toast.success('Sermon uploaded successfully');
+      setFormTitle('');
+      setFormSpeaker('');
+      setShowUpload(false);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to upload sermon');
+    }
+  };
+
+  const handleDeleteSermon = async (id: string) => {
+    try {
+      await deleteSermon(id);
+      toast.success('Sermon deleted');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete sermon');
+    }
+  };
+
+  const handleDeleteGallery = async (id: string) => {
+    try {
+      await deleteGalleryItem(id);
+      toast.success('Gallery item deleted');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete gallery item');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -41,10 +101,14 @@ const MediaManagement = () => {
           <div className="grid sm:grid-cols-2 gap-3 mt-4">
             <input
               placeholder="Title"
+              value={formTitle}
+              onChange={e => setFormTitle(e.target.value)}
               className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20"
             />
             <input
               placeholder="Speaker / Event"
+              value={formSpeaker}
+              onChange={e => setFormSpeaker(e.target.value)}
               className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20"
             />
           </div>
@@ -55,7 +119,12 @@ const MediaManagement = () => {
             >
               Cancel
             </button>
-            <button className="px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium">
+            <button
+              onClick={handleUpload}
+              disabled={creatingSermon}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium disabled:opacity-60"
+            >
+              {creatingSermon && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               Upload
             </button>
           </div>
@@ -110,7 +179,9 @@ const MediaManagement = () => {
                   {new Date(sermon.date).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
-              <button className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors shrink-0">
+              <button
+                onClick={() => handleDeleteSermon(sermon.id)}
+                className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors shrink-0">
                 <Trash2 className="w-4 h-4" />
               </button>
             </motion.div>
@@ -136,7 +207,9 @@ const MediaManagement = () => {
                 ) : (
                   <Image className="w-8 h-8 text-primary-foreground/70" />
                 )}
-                <button className="absolute top-2 right-2 p-1.5 rounded-lg bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity text-primary-foreground hover:bg-destructive">
+                <button
+                  onClick={() => handleDeleteGallery(item.id)}
+                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity text-primary-foreground hover:bg-destructive">
                   <Trash2 className="w-3 h-3" />
                 </button>
               </div>
