@@ -1,8 +1,10 @@
-import { Calendar, Users, TrendingUp, ChevronRight, Loader2 } from 'lucide-react';
+import { Calendar, Users, TrendingUp, ChevronRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useEvents, useSermons, useAttendance, useMember } from '@/hooks/useApi';
+import { useEvents, useSermons, useAttendance, useMember, useRegisterForEvent } from '@/hooks/useApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const MemberDashboard = () => {
   const { user } = useAuth();
