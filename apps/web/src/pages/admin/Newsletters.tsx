@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { newsletters } from '@/data/adminMockData';
-import { Newspaper, Plus, Edit, Trash2, Send, Eye, ChevronDown, Calendar, User } from 'lucide-react';
+import { useNewsletters, useCreateNewsletter, useDeleteNewsletter } from '@/hooks/useApi';
+import { Newspaper, Plus, Edit, Trash2, Send, ChevronDown, Calendar, User, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 const categories = ['announcement', 'devotional', 'update', 'prayer'] as const;
 const categoryColors: Record<string, string> = {
@@ -16,9 +17,61 @@ const Newsletters = () => {
   const [showEditor, setShowEditor] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
+  const [formTitle, setFormTitle] = useState('');
+  const [formCategory, setFormCategory] = useState<string>('');
+  const [formStatus, setFormStatus] = useState('draft');
+  const [formContent, setFormContent] = useState('');
+
+  const { data: newsletters = [], isLoading } = useNewsletters();
+  const { mutateAsync: createNewsletter, isPending } = useCreateNewsletter();
+  const { mutateAsync: deleteNewsletter } = useDeleteNewsletter();
+
   const published = newsletters.filter(n => n.status === 'published').length;
   const drafts = newsletters.filter(n => n.status === 'draft').length;
   const filtered = filter === 'all' ? newsletters : newsletters.filter(n => n.category === filter || n.status === filter);
+
+  const handleCreate = async () => {
+    if (!formTitle || !formCategory || !formContent) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    try {
+      await createNewsletter({
+        title: formTitle,
+        category: formCategory,
+        status: formStatus,
+        content: formContent,
+        date: new Date().toISOString().split('T')[0],
+        author: 'Admin',
+      });
+      toast.success('Newsletter created successfully');
+      setFormTitle('');
+      setFormCategory('');
+      setFormStatus('draft');
+      setFormContent('');
+      setShowEditor(false);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to create newsletter');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteNewsletter(id);
+      toast.success('Newsletter deleted');
+      if (expandedId === id) setExpandedId(null);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete newsletter');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -55,29 +108,47 @@ const Newsletters = () => {
           className="bg-card rounded-xl border border-border p-5 shadow-sm">
           <h3 className="text-sm font-semibold mb-3">Create Newsletter</h3>
           <div className="space-y-3">
-            <input placeholder="Newsletter Title" className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+            <input
+              placeholder="Newsletter Title"
+              value={formTitle}
+              onChange={e => setFormTitle(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
             <div className="grid sm:grid-cols-2 gap-3">
               <div className="relative">
-                <select className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
+                <select
+                  value={formCategory}
+                  onChange={e => setFormCategory(e.target.value)}
+                  className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
                   <option value="">Select Category</option>
                   {categories.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
                 </select>
                 <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
               </div>
               <div className="relative">
-                <select className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
+                <select
+                  value={formStatus}
+                  onChange={e => setFormStatus(e.target.value)}
+                  className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
                   <option value="draft">Save as Draft</option>
                   <option value="published">Publish Now</option>
                 </select>
                 <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
               </div>
             </div>
-            <textarea placeholder="Write your newsletter content here..." rows={6}
+            <textarea
+              placeholder="Write your newsletter content here..."
+              rows={6}
+              value={formContent}
+              onChange={e => setFormContent(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-input bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring/20" />
             <div className="flex justify-end gap-2">
               <button onClick={() => setShowEditor(false)} className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:bg-muted transition-colors">Cancel</button>
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium">
-                <Send className="w-3.5 h-3.5" /> Publish
+              <button
+                onClick={handleCreate}
+                disabled={isPending}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium disabled:opacity-60">
+                {isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                Publish
               </button>
             </div>
           </div>
@@ -103,7 +174,7 @@ const Newsletters = () => {
             className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
             <button onClick={() => setExpandedId(expandedId === nl.id ? null : nl.id)}
               className="w-full px-4 py-4 flex items-start gap-3 text-left hover:bg-muted/30 transition-colors">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${categoryColors[nl.category]}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${categoryColors[nl.category] ?? 'bg-muted text-muted-foreground'}`}>
                 <Newspaper className="w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -117,7 +188,7 @@ const Newsletters = () => {
                   <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{new Date(nl.date).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</span>
                   <span className="flex items-center gap-1"><User className="w-3 h-3" />{nl.author}</span>
                 </div>
-                <span className={`inline-block mt-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${categoryColors[nl.category]}`}>
+                <span className={`inline-block mt-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${categoryColors[nl.category] ?? 'bg-muted text-muted-foreground'}`}>
                   {nl.category}
                 </span>
               </div>
@@ -132,7 +203,9 @@ const Newsletters = () => {
                   <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-muted-foreground hover:bg-muted transition-colors">
                     <Edit className="w-3 h-3" /> Edit
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 transition-colors">
+                  <button
+                    onClick={() => handleDelete(nl.id)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 transition-colors">
                     <Trash2 className="w-3 h-3" /> Delete
                   </button>
                 </div>
