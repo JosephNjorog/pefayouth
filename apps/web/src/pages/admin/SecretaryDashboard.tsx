@@ -1,15 +1,23 @@
-import { members, events, attendanceRecords } from '@/data/mockData';
-import { newsletters } from '@/data/adminMockData';
-import { Users, Calendar, FileText, Newspaper, Film, TrendingUp, UserPlus, Bell } from 'lucide-react';
+import { useMembers, useEvents, useAttendance, useNewsletters } from '@/hooks/useApi';
+import { Users, Calendar, FileText, Newspaper, Film, TrendingUp, UserPlus, Bell, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SecretaryDashboard = () => {
+  const { data: members = [], isLoading: membersLoading } = useMembers();
+  const { data: events = [], isLoading: eventsLoading } = useEvents();
+  const { data: attendance = [], isLoading: attendanceLoading } = useAttendance();
+  const { data: newsletters = [], isLoading: newslettersLoading } = useNewsletters();
+
+  const isLoading = membersLoading || eventsLoading || attendanceLoading || newslettersLoading;
+
   const totalMembers = members.length;
   const upcomingEvents = events.filter(e => new Date(e.date) >= new Date()).length;
   const publishedNewsletters = newsletters.filter(n => n.status === 'published').length;
-  const avgAttendance = Math.round(
-    attendanceRecords.reduce((sum, a) => sum + (a.present / a.total) * 100, 0) / attendanceRecords.length
-  );
+
+  // attendance records have a "present" boolean field
+  const avgAttendance = attendance.length > 0
+    ? Math.round((attendance.filter(a => a.present).length / attendance.length) * 100)
+    : 0;
 
   const statCards = [
     { label: 'Total Members', value: totalMembers, icon: Users, color: 'bg-primary/10 text-primary' },
@@ -26,6 +34,14 @@ const SecretaryDashboard = () => {
     { label: 'Take Notes', icon: FileText, link: '/admin/records' },
     { label: 'View Attendance', icon: Users, link: '/admin/attendance' },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
