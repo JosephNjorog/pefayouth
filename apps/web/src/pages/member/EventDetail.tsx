@@ -1,18 +1,27 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { events } from '@/data/mockData';
-import { ArrowLeft, MapPin, Clock, Users, CheckCircle } from 'lucide-react';
+import { useEvent } from '@/hooks/useApi';
+import { ArrowLeft, MapPin, Clock, Users, CheckCircle, Loader2 } from 'lucide-react';
 import PaymentModal from '@/components/PaymentModal';
 
 const EventDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const event = events.find(e => e.id === id);
+
+  const { data: event, isLoading, isError } = useEvent(id);
 
   const [rsvpd, setRsvpd] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
 
-  if (!event) {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (isError || !event) {
     return (
       <div className="px-4 py-8 text-center">
         <p className="text-muted-foreground">Event not found</p>
@@ -31,6 +40,7 @@ const EventDetail = () => {
 
   const spotsLeft = event.capacity - event.registered;
   const progress = (event.registered / event.capacity) * 100;
+  const price = Number(event.price ?? 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -97,7 +107,7 @@ const EventDetail = () => {
             <div className="bg-accent/10 rounded-xl p-4 mb-5">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Event Fee</span>
-                <span className="text-xl font-bold text-accent-foreground">KES {event.price?.toLocaleString()}</span>
+                <span className="text-xl font-bold text-accent-foreground">KES {price.toLocaleString()}</span>
               </div>
             </div>
           )}
@@ -117,7 +127,7 @@ const EventDetail = () => {
                 event.isPaid ? 'gradient-gold text-accent-foreground shadow-gold' : 'gradient-primary shadow-church'
               }`}
             >
-              {event.isPaid ? `Pay & Register - KES ${event.price?.toLocaleString()}` : 'RSVP - Free Event'}
+              {event.isPaid ? `Pay & Register - KES ${price.toLocaleString()}` : 'RSVP - Free Event'}
             </button>
           )}
         </div>
@@ -128,9 +138,10 @@ const EventDetail = () => {
         <PaymentModal
           show={showPayment}
           onClose={() => setShowPayment(false)}
-          onSuccess={() => setRsvpd(true)}
+          onSuccess={() => { setRsvpd(true); setShowPayment(false); }}
           eventTitle={event.title}
-          price={event.price!}
+          price={price}
+          eventId={event.id}
         />
       )}
     </div>
