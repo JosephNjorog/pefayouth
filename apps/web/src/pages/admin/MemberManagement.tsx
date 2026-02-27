@@ -27,6 +27,36 @@ const MemberManagement = () => {
   const deleteMember = useDeleteMember();
 
   const selectedMember = viewMemberId ? members.find((m) => m.id === viewMemberId) : null;
+  const editingMember = editMemberId ? members.find((m) => m.id === editMemberId) : null;
+
+  const startEdit = (member: typeof members[0]) => {
+    setEditMemberId(member.id);
+    setEditForm({ name: member.name, phone: member.phone || '', email: member.email || '', joinedDate: member.joinedDate || '', ministry: member.ministry || '', cellGroup: member.cellGroup || '' });
+    setViewMemberId(null);
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editMemberId || !editForm.name) return;
+    try {
+      await updateMember.mutateAsync({ id: editMemberId, data: editForm });
+      toast.success('Member updated successfully');
+      setEditMemberId(null);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update member');
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Delete member "${name}"? This cannot be undone.`)) return;
+    try {
+      await deleteMember.mutateAsync(id);
+      toast.success('Member deleted');
+      if (viewMemberId === id) setViewMemberId(null);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to delete member');
+    }
+  };
 
   const membersByMinistry = ministries.map((min) => ({
     ministry: min,
