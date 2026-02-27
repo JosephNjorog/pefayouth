@@ -120,7 +120,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
                 <div className="w-9 h-9 rounded-xl gradient-gold flex items-center justify-center">
                   <Church className="w-5 h-5 text-accent-foreground" />
                 </div>
-                <span className="text-base font-bold">YouthConnect</span>
+                <span className="text-base font-bold">PEFA Youth</span>
               </div>
               <p className="text-sm text-primary-foreground/60 leading-relaxed">
                 Empowering the next generation through faith, fellowship, and community.
@@ -163,7 +163,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="mt-10 pt-6 border-t border-primary-foreground/10 text-center text-xs text-primary-foreground/40">
-            © 2026 YouthConnect Church. All rights reserved.
+            © 2026 PEFA Youth Church Kajiado. All rights reserved.
           </div>
         </div>
       </footer>

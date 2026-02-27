@@ -12,9 +12,9 @@ const coreValues = [
 ];
 
 const leadershipTeam = [
-  { name: 'Pastor Daniel Mutua', role: 'Senior Youth Pastor', description: 'Leading our youth ministry with vision and passion for over 10 years.' },
-  { name: 'Rev. Mary Wambui', role: 'Associate Pastor', description: 'Guiding spiritual growth and discipleship programs for young believers.' },
-  { name: 'Bishop James Karanja', role: 'Founding Pastor', description: 'The visionary behind YouthConnect, championing youth empowerment since 2015.' },
+  { name: 'Pastor Daniel Mutua', role: 'Senior Youth Pastor', description: 'Leading the PEFA Youth ministry with vision and passion for the next generation.' },
+  { name: 'Rev. Mary Wambui', role: 'Finance & Admin', description: 'Overseeing the financial stewardship and administration of the youth ministry.' },
+  { name: 'Ruth Njeri', role: 'Secretary', description: 'Coordinating communications, records, and the day-to-day operations of PEFA Youth.' },
 ];
 
 const About = () => {
@@ -28,7 +28,7 @@ const About = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">About YouthConnect</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">About PEFA Youth</h1>
             <p className="text-primary-foreground/80 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
               We are a vibrant community of young believers passionate about knowing God, growing in faith, and making a difference in the world around us.
             </p>
@@ -66,13 +66,7 @@ const About = () => {
             >
               <Card className="bg-primary/5 border-primary/10">
                 <CardContent className="pt-6 text-center">
-                  <p className="text-3xl font-bold text-primary">200+</p>
-                  <p className="text-sm text-muted-foreground mt-1">Active Members</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-accent/5 border-accent/10">
-                <CardContent className="pt-6 text-center">
-                  <p className="text-3xl font-bold text-accent">8</p>
+                  <p className="text-3xl font-bold text-primary">4</p>
                   <p className="text-sm text-muted-foreground mt-1">Cell Groups</p>
                 </CardContent>
               </Card>
@@ -82,10 +76,16 @@ const About = () => {
                   <p className="text-sm text-muted-foreground mt-1">Ministry Teams</p>
                 </CardContent>
               </Card>
+              <Card className="bg-accent/5 border-accent/10">
+                <CardContent className="pt-6 text-center">
+                  <p className="text-3xl font-bold text-accent">52</p>
+                  <p className="text-sm text-muted-foreground mt-1">Sundays a Year</p>
+                </CardContent>
+              </Card>
               <Card className="bg-primary/5 border-primary/10">
                 <CardContent className="pt-6 text-center">
-                  <p className="text-3xl font-bold text-primary">10+</p>
-                  <p className="text-sm text-muted-foreground mt-1">Years of Impact</p>
+                  <p className="text-3xl font-bold text-primary">1</p>
+                  <p className="text-sm text-muted-foreground mt-1">Body in Christ</p>
                 </CardContent>
               </Card>
             </motion.div>
