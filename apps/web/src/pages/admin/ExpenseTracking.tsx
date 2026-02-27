@@ -40,6 +40,16 @@ const ExpenseTracking = () => {
     return matchCat && matchStatus && matchSearch;
   });
 
+  const exportCSV = () => {
+    const rows = [['Date', 'Description', 'Category', 'Amount (KES)', 'Status', 'Receipt No', 'Approved By']];
+    filtered.forEach(e => rows.push([e.date, e.description, e.category, String(Number(e.amount)), e.status, e.receiptNo || '', e.approvedBy || '']));
+    const csv = rows.map(r => r.map(v => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `expenses-${new Date().toISOString().split('T')[0]}.csv`; a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleSubmit = async () => {
     if (!formDescription || !formAmount || !formCategory || !formDate) {
       toast.error('Please fill in all required fields');
