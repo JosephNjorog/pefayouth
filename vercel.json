@@ -1,0 +1,10 @@
+{
+  "buildCommand": "cd apps/web && bun run build",
+  "outputDirectory": "apps/web/dist",
+  "installCommand": "bun install",
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
