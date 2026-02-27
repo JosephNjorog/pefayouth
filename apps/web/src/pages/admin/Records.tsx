@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useRecords, useCreateRecord, useDeleteRecord } from '@/hooks/useApi';
-import { FileText, Plus, Calendar, User, ChevronDown, Edit, Trash2, Loader2 } from 'lucide-react';
+import { useRecords, useCreateRecord, useUpdateRecord, useDeleteRecord } from '@/hooks/useApi';
+import { FileText, Plus, Calendar, User, ChevronDown, Edit, Trash2, Loader2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -8,6 +8,9 @@ const Records = () => {
   const [filter, setFilter] = useState<string>('all');
   const [showNew, setShowNew] = useState(false);
   const [expandedNote, setExpandedNote] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
 
   const [formTitle, setFormTitle] = useState('');
   const [formType, setFormType] = useState('meeting');
@@ -15,6 +18,7 @@ const Records = () => {
 
   const { data: records = [], isLoading } = useRecords(filter !== 'all' ? { type: filter } : undefined);
   const { mutateAsync: createRecord, isPending } = useCreateRecord();
+  const { mutateAsync: updateRecord, isPending: updating } = useUpdateRecord();
   const { mutateAsync: deleteRecord } = useDeleteRecord();
 
   const filteredNotes = filter === 'all'
@@ -41,6 +45,23 @@ const Records = () => {
       setShowNew(false);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Failed to save record');
+    }
+  };
+
+  const startEdit = (note: { id: string; title: string; content: string }) => {
+    setEditingId(note.id);
+    setEditTitle(note.title);
+    setEditContent(note.content);
+  };
+
+  const handleUpdate = async () => {
+    if (!editingId || !editTitle || !editContent) return;
+    try {
+      await updateRecord({ id: editingId, data: { title: editTitle, content: editContent } });
+      toast.success('Record updated');
+      setEditingId(null);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update record');
     }
   };
 
