@@ -96,7 +96,7 @@ const PaymentModal = ({ show, onClose, onSuccess, eventTitle, price, eventId }: 
     }
   };
 
-  const transactionId = paymentData?.transactionId ?? `TXN${Math.floor(Math.random() * 999999)}`;
+  const transactionId = paymentData?.transactionId ?? paymentData?.mpesaCheckoutRequestId ?? '—';
 
   return createPortal(
     <AnimatePresence>

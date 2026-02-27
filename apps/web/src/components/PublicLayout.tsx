@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 const navLinks = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About Us' },
+  { to: '/events', label: 'Events' },
+  { to: '/sermons', label: 'Sermons' },
 ];
 
 export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
