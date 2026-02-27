@@ -12,9 +12,7 @@ const coreValues = [
 ];
 
 const leadershipTeam = [
-  { name: 'Pastor Daniel Mutua', role: 'Senior Youth Pastor', description: 'Leading the PEFA Youth ministry with vision and passion for the next generation.' },
-  { name: 'Rev. Mary Wambui', role: 'Finance & Admin', description: 'Overseeing the financial stewardship and administration of the youth ministry.' },
-  { name: 'Ruth Njeri', role: 'Secretary', description: 'Coordinating communications, records, and the day-to-day operations of PEFA Youth.' },
+  { name: 'Bishop Joseph Lomonyak', role: 'Regional Bishop — PEFA Kajiado-Narok Region', description: 'Providing spiritual oversight and visionary leadership for all PEFA churches across the Kajiado-Narok Region.' },
 ];
 
 const About = () => {
