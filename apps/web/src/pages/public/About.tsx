@@ -54,7 +54,7 @@ const About = () => {
                   We meet every Sunday for worship, have weekly fellowship gatherings on Fridays, and organize life-changing retreats and camps throughout the year. Our cell groups provide intimate spaces for discipleship and accountability.
                 </p>
                 <p>
-                  Through our community outreach programs, we serve the underprivileged in Nairobi and beyond, putting our faith into action. Every member is encouraged to discover their gifts and use them to serve God and the community.
+                  Through our community outreach programs, we serve the underprivileged in Kajiado and beyond, putting our faith into action. Every member is encouraged to discover their gifts and use them to serve God and the community.
                 </p>
               </div>
             </motion.div>
