@@ -13,6 +13,8 @@ import Home from "./pages/public/Home";
 import About from "./pages/public/About";
 import FeatureDetail from "./pages/public/FeatureDetail";
 import CellGroupDetail from "./pages/public/CellGroupDetail";
+import PublicEvents from "./pages/public/PublicEvents";
+import PublicSermons from "./pages/public/PublicSermons";
 import MemberDashboard from "./pages/member/Dashboard";
 import Profile from "./pages/member/Profile";
 import Events from "./pages/member/Events";
@@ -79,6 +81,8 @@ const App = () => (
             <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
             <Route path="/about/:slug" element={<PublicLayout><FeatureDetail /></PublicLayout>} />
             <Route path="/cell-groups/:slug" element={<PublicLayout><CellGroupDetail /></PublicLayout>} />
+            <Route path="/events" element={<PublicLayout><PublicEvents /></PublicLayout>} />
+            <Route path="/sermons" element={<PublicLayout><PublicSermons /></PublicLayout>} />
             <Route path="/login" element={<LoginRoute />} />
 
             {/* Member Routes */}
