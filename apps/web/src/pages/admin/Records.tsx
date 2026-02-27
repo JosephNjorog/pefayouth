@@ -48,10 +48,10 @@ const Records = () => {
     }
   };
 
-  const startEdit = (note: { id: string; title: string; content: string }) => {
+  const startEdit = (note: { id: string; title: string; content?: string }) => {
     setEditingId(note.id);
     setEditTitle(note.title);
-    setEditContent(note.content);
+    setEditContent(note.content ?? '');
   };
 
   const handleUpdate = async () => {
