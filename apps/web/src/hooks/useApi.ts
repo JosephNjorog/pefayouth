@@ -40,6 +40,10 @@ export const useDeleteEvent = () => {
   const qc = useQueryClient();
   return useMutation({ mutationFn: api.deleteEvent, onSuccess: () => qc.invalidateQueries({ queryKey: ['events'] }) });
 };
+export const useRegisterForEvent = () => {
+  const qc = useQueryClient();
+  return useMutation({ mutationFn: api.registerForEvent, onSuccess: () => qc.invalidateQueries({ queryKey: ['events'] }) });
+};
 
 // ─── Attendance ───────────────────────────────────────────────────────────────
 export const useAttendance = (params?: { eventId?: string; memberId?: string }) =>
