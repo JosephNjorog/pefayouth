@@ -1,17 +1,38 @@
-import { Calendar, Users, TrendingUp, ChevronRight } from 'lucide-react';
+import { Calendar, Users, TrendingUp, ChevronRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { events, currentMember, sermons, memberAttendanceHistory } from '@/data/mockData';
+import { useEvents, useSermons, useAttendance, useMember } from '@/hooks/useApi';
+import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 
 const MemberDashboard = () => {
-  const upcomingEvents = events
-    .filter(e => new Date(e.date) >= new Date())
+  const { user } = useAuth();
+
+  const { data: upcomingEventsData = [], isLoading: eventsLoading } = useEvents({ upcoming: 'true' });
+  const { data: sermons = [], isLoading: sermonsLoading } = useSermons();
+  const { data: attendance = [], isLoading: attendanceLoading } = useAttendance();
+  const { data: member, isLoading: memberLoading } = useMember(user?.memberId);
+
+  const isLoading = eventsLoading || sermonsLoading || attendanceLoading || memberLoading;
+
+  const upcomingEvents = upcomingEventsData
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 3);
 
   const recentSermon = sermons[0];
-  const recentAttendance = memberAttendanceHistory.slice(0, 5);
-  const presentCount = memberAttendanceHistory.filter(a => a.status === 'present').length;
+  const recentAttendance = attendance.slice(0, 5);
+  const presentCount = attendance.filter(a => a.present).length;
+
+  const memberName = member?.name ?? user?.name ?? 'Friend';
+  const attendanceRate = member?.attendanceRate ? `${member.attendanceRate}%` : `${attendance.length > 0 ? Math.round((presentCount / attendance.length) * 100) : 0}%`;
+  const cellGroup = member?.cellGroup ?? '';
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 lg:px-6 py-5 lg:py-8 space-y-6">
@@ -23,21 +44,23 @@ const MemberDashboard = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="gradient-primary rounded-2xl p-5 lg:p-6 text-primary-foreground lg:col-span-2"
         >
-          <h1 className="text-xl lg:text-2xl font-bold">Hello, {currentMember.name.split(' ')[0]}! 👋</h1>
+          <h1 className="text-xl lg:text-2xl font-bold">Hello, {memberName.split(' ')[0]}! 👋</h1>
           <p className="text-sm opacity-80 mt-1">God's grace is sufficient for you today</p>
           <div className="flex items-center gap-4 mt-4">
             <div className="bg-primary-foreground/15 rounded-xl px-3 py-2 text-center">
-              <p className="text-lg font-bold">{currentMember.attendanceRate}%</p>
+              <p className="text-lg font-bold">{attendanceRate}</p>
               <p className="text-[10px] opacity-70">Attendance</p>
             </div>
             <div className="bg-primary-foreground/15 rounded-xl px-3 py-2 text-center">
-              <p className="text-lg font-bold">{presentCount}/{memberAttendanceHistory.length}</p>
+              <p className="text-lg font-bold">{presentCount}/{attendance.length}</p>
               <p className="text-[10px] opacity-70">Services</p>
             </div>
-            <div className="bg-primary-foreground/15 rounded-xl px-3 py-2 text-center flex-1">
-              <p className="text-sm font-semibold">{currentMember.cellGroup}</p>
-              <p className="text-[10px] opacity-70">Cell Group</p>
-            </div>
+            {cellGroup && (
+              <div className="bg-primary-foreground/15 rounded-xl px-3 py-2 text-center flex-1">
+                <p className="text-sm font-semibold">{cellGroup}</p>
+                <p className="text-[10px] opacity-70">Cell Group</p>
+              </div>
+            )}
           </div>
         </motion.div>
 
@@ -93,7 +116,7 @@ const MemberDashboard = () => {
                     <p className="text-xs text-muted-foreground">{event.time} · {event.location}</p>
                     {event.isPaid && (
                       <span className="inline-block mt-1 text-[10px] font-medium bg-accent/10 text-accent-foreground px-2 py-0.5 rounded-full">
-                        KES {event.price?.toLocaleString()}
+                        KES {Number(event.price ?? 0).toLocaleString()}
                       </span>
                     )}
                   </div>
@@ -140,26 +163,31 @@ const MemberDashboard = () => {
         <div className="bg-card rounded-2xl border border-border overflow-hidden shadow-sm">
           {recentAttendance.map((record, i) => (
             <div
-              key={i}
+              key={record.id}
               className={`flex items-center justify-between px-4 py-3 ${
                 i < recentAttendance.length - 1 ? 'border-b border-border' : ''
               }`}
             >
               <div>
-                <p className="text-sm font-medium">{record.event}</p>
+                <p className="text-sm font-medium">{record.eventTitle ?? 'Service'}</p>
                 <p className="text-xs text-muted-foreground">
                   {new Date(record.date).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
               <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                record.status === 'present'
+                record.present
                   ? 'bg-secondary text-secondary-foreground'
                   : 'bg-destructive/10 text-destructive'
               }`}>
-                {record.status === 'present' ? '✓ Present' : '✗ Absent'}
+                {record.present ? '✓ Present' : '✗ Absent'}
               </span>
             </div>
           ))}
+          {recentAttendance.length === 0 && (
+            <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+              No attendance records yet
+            </div>
+          )}
         </div>
       </div>
     </div>

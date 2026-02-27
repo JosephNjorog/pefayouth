@@ -1,16 +1,66 @@
 import { useState } from 'react';
-import { meetingNotes } from '@/data/mockData';
-import { FileText, Plus, Calendar, User, ChevronDown, Edit, Trash2 } from 'lucide-react';
+import { useRecords, useCreateRecord, useDeleteRecord } from '@/hooks/useApi';
+import { FileText, Plus, Calendar, User, ChevronDown, Edit, Trash2, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 const Records = () => {
   const [filter, setFilter] = useState<string>('all');
   const [showNew, setShowNew] = useState(false);
   const [expandedNote, setExpandedNote] = useState<string | null>(null);
 
+  const [formTitle, setFormTitle] = useState('');
+  const [formType, setFormType] = useState('meeting');
+  const [formContent, setFormContent] = useState('');
+
+  const { data: records = [], isLoading } = useRecords(filter !== 'all' ? { type: filter } : undefined);
+  const { mutateAsync: createRecord, isPending } = useCreateRecord();
+  const { mutateAsync: deleteRecord } = useDeleteRecord();
+
   const filteredNotes = filter === 'all'
-    ? meetingNotes
-    : meetingNotes.filter(n => n.type === filter);
+    ? records
+    : records.filter(n => n.type === filter);
+
+  const handleCreate = async () => {
+    if (!formTitle || !formContent) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    try {
+      await createRecord({
+        title: formTitle,
+        type: formType,
+        content: formContent,
+        date: new Date().toISOString().split('T')[0],
+        author: 'Admin',
+      });
+      toast.success('Record saved successfully');
+      setFormTitle('');
+      setFormType('meeting');
+      setFormContent('');
+      setShowNew(false);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save record');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteRecord(id);
+      toast.success('Record deleted');
+      if (expandedNote === id) setExpandedNote(null);
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete record');
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -39,10 +89,15 @@ const Records = () => {
           <div className="space-y-3">
             <input
               placeholder="Title"
+              value={formTitle}
+              onChange={e => setFormTitle(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20"
             />
             <div className="relative">
-              <select className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
+              <select
+                value={formType}
+                onChange={e => setFormType(e.target.value)}
+                className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
                 <option value="meeting">Meeting Notes</option>
                 <option value="event-note">Event Notes</option>
               </select>
@@ -51,6 +106,8 @@ const Records = () => {
             <textarea
               placeholder="Write your notes here..."
               rows={4}
+              value={formContent}
+              onChange={e => setFormContent(e.target.value)}
               className="w-full px-4 py-3 rounded-xl border border-input bg-background text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring/20"
             />
             <div className="flex justify-end gap-2">
@@ -60,7 +117,12 @@ const Records = () => {
               >
                 Cancel
               </button>
-              <button className="px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium">
+              <button
+                onClick={handleCreate}
+                disabled={isPending}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium disabled:opacity-60"
+              >
+                {isPending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                 Save Record
               </button>
             </div>
@@ -142,7 +204,9 @@ const Records = () => {
                     <Edit className="w-3 h-3" />
                     Edit
                   </button>
-                  <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 transition-colors">
+                  <button
+                    onClick={() => handleDelete(note.id)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs text-destructive hover:bg-destructive/10 transition-colors">
                     <Trash2 className="w-3 h-3" />
                     Delete
                   </button>
