@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { Heart, Eye, Target, BookOpen, Users, Handshake, Sparkles, Shield } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import youthsGroupImg from '@/assets/youths-group.jpg';
+import growFaithImg from '@/assets/grow-faith.jpg';
 
 const coreValues = [
   { icon: BookOpen, title: 'Word-Centered', description: 'We anchor every activity and decision in the truth of God\'s Word.' },
