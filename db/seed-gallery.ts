@@ -124,10 +124,9 @@ async function uploadFile(filePath: string): Promise<string> {
 }
 
 // ── Seed the DB ───────────────────────────────────────────────────────────────
-// Import DB after env is loaded
-const { db, galleryItems } = await import('./client.js');
-
 async function run() {
+  // Import DB after env is loaded
+  const { db, galleryItems } = await import('./client.js');
   console.log('🚀 Seeding gallery with church photos...\n');
 
   for (const asset of assets) {
