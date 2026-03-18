@@ -136,6 +136,33 @@ async function authLogin(req: VercelRequest, res: VercelResponse) {
   return ok(res, { id: user.id, email: user.email, role: user.role, name, memberId: user.memberId });
 }
 
+async function authRegister(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') return err(res, 'Method not allowed', 405);
+  const { name, email, password } = req.body || {};
+  if (!name || !email || !password) return err(res, 'Name, email, and password are required');
+  if (password.length < 6) return err(res, 'Password must be at least 6 characters');
+
+  const [existing] = await db.select().from(users).where(eq(users.email, email.toLowerCase())).limit(1);
+  if (existing) return err(res, 'An account with this email already exists');
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  const [member] = await db.insert(members).values({
+    name,
+    email: email.toLowerCase(),
+    joinedDate: new Date().toISOString().split('T')[0],
+  }).returning();
+  const [user] = await db.insert(users).values({
+    email: email.toLowerCase(),
+    passwordHash,
+    role: 'member',
+    memberId: member.id,
+  }).returning();
+
+  const token = await signJWT({ id: user.id, email: user.email, role: user.role, name: member.name, memberId: member.id });
+  setAuthCookie(res, token);
+  return ok(res, { id: user.id, email: user.email, role: user.role, name: member.name, memberId: member.id }, 201);
+}
+
 async function authLogout(req: VercelRequest, res: VercelResponse) {
   clearAuthCookie(res);
   return ok(res, { message: 'Logged out' });

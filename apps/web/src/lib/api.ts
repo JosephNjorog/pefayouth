@@ -22,6 +22,11 @@ export const authLogin = (email: string, password: string) =>
 
 export const authLogout = () => apiFetch('/api/auth/logout', { method: 'POST' });
 
+export const authRegister = (name: string, email: string, password: string) =>
+  apiFetch<{ id: string; email: string; role: string; name: string; memberId?: string }>(
+    '/api/auth/register', { method: 'POST', body: JSON.stringify({ name, email, password }) }
+  );
+
 export const authMe = () =>
   apiFetch<{ id: string; email: string; role: string; name: string; memberId?: string }>('/api/auth/me');
 
