@@ -211,6 +211,12 @@ export const updateRecord = (id: string, data: Partial<MeetingNote>) =>
 export const deleteRecord = (id: string) =>
   apiFetch(`/api/records/${id}`, { method: 'DELETE' });
 
+// ─── Cloudinary ──────────────────────────────────────────────────────────────
+export const getCloudinarySignature = (folder?: string) =>
+  apiFetch<{ signature: string; timestamp: number; cloudName: string; apiKey: string; folder: string }>(
+    '/api/cloudinary/sign', { method: 'POST', body: JSON.stringify({ folder }) }
+  );
+
 // ─── Finance ─────────────────────────────────────────────────────────────────
 export interface FinancialSummary {
   month: string; income: number; expenses: number; balance: number;
