@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useSermons, useCreateSermon, useDeleteSermon, useGallery, useCreateGalleryItem, useDeleteGalleryItem } from '@/hooks/useApi';
-import { Upload, Play, Image, Trash2, Plus, Video, Headphones, Loader2, Link2, ChevronDown } from 'lucide-react';
+import { Upload, Play, Image, Trash2, Plus, Video, Headphones, Loader2, Link2, ChevronDown, CloudUpload, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 
 const MediaManagement = () => {
   const [tab, setTab] = useState<'sermons' | 'gallery'>('sermons');
@@ -20,6 +21,10 @@ const MediaManagement = () => {
   const [galleryEvent, setGalleryEvent] = useState('');
   const [galleryType, setGalleryType] = useState<'image' | 'video'>('image');
   const [galleryUrl, setGalleryUrl] = useState('');
+  const [galleryFile, setGalleryFile] = useState<File | null>(null);
+  const [galleryPreview, setGalleryPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: sermons = [], isLoading: sermonsLoading } = useSermons();
   const { data: galleryItems = [], isLoading: galleryLoading } = useGallery();
@@ -29,6 +34,22 @@ const MediaManagement = () => {
   const { mutateAsync: deleteGalleryItem } = useDeleteGalleryItem();
 
   const isLoading = sermonsLoading || galleryLoading;
+
+  const handleFileSelect = (file: File) => {
+    if (!file.type.startsWith('image/')) { toast.error('Please select an image file'); return; }
+    if (file.size > 10 * 1024 * 1024) { toast.error('Image must be under 10 MB'); return; }
+    setGalleryFile(file);
+    setGalleryUrl('');
+    const reader = new FileReader();
+    reader.onload = (e) => setGalleryPreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const clearFile = () => {
+    setGalleryFile(null);
+    setGalleryPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSermonUpload = async () => {
     if (!formTitle || !formSpeaker) { toast.error('Title and speaker are required'); return; }
@@ -42,10 +63,25 @@ const MediaManagement = () => {
 
   const handleGalleryUpload = async () => {
     if (!galleryTitle) { toast.error('Title is required'); return; }
+    let finalUrl = galleryUrl;
+
+    if (galleryFile) {
+      setUploading(true);
+      try {
+        finalUrl = await uploadToCloudinary(galleryFile, 'pefayouth/gallery');
+      } catch (err: unknown) {
+        setUploading(false);
+        toast.error(err instanceof Error ? err.message : 'Image upload failed');
+        return;
+      }
+      setUploading(false);
+    }
+
     try {
-      await createGalleryItem({ title: galleryTitle, event: galleryEvent, date: new Date().toISOString().split('T')[0], type: galleryType, url: galleryUrl || undefined });
+      await createGalleryItem({ title: galleryTitle, event: galleryEvent, date: new Date().toISOString().split('T')[0], type: galleryType, url: finalUrl || undefined });
       toast.success('Gallery item added successfully');
-      setGalleryTitle(''); setGalleryEvent(''); setGalleryType('image'); setGalleryUrl('');
+      setGalleryTitle(''); setGalleryEvent(''); setGalleryType('image');
+      setGalleryUrl(''); clearFile();
       setShowUpload(false);
     } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed to add gallery item'); }
   };
@@ -84,7 +120,7 @@ const MediaManagement = () => {
           {/* Tabs inside upload */}
           <div className="flex bg-muted rounded-xl p-1 mb-4">
             <button onClick={() => setTab('sermons')} className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${tab === 'sermons' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground'}`}>Sermon / Teaching</button>
-            <button onClick={() => setTab('gallery')} className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${tab === 'gallery' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground'}`}>Gallery Item</button>
+            <button onClick={() => setTab('gallery')} className={`flex-1 py-2 text-xs font-medium rounded-lg transition-all ${tab === 'gallery' ? 'bg-card text-primary shadow-sm' : 'text-muted-foreground'}`}>Gallery Photo</button>
           </div>
 
           {tab === 'sermons' ? (
@@ -118,28 +154,63 @@ const MediaManagement = () => {
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 gap-3">
-              <input placeholder="Title *" value={galleryTitle} onChange={e => setGalleryTitle(e.target.value)}
+              <input placeholder="Photo Title *" value={galleryTitle} onChange={e => setGalleryTitle(e.target.value)}
                 className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-              <input placeholder="Event Name" value={galleryEvent} onChange={e => setGalleryEvent(e.target.value)}
+              <input placeholder="Event Name (optional)" value={galleryEvent} onChange={e => setGalleryEvent(e.target.value)}
                 className="px-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-              <div className="relative">
-                <select value={galleryType} onChange={e => setGalleryType(e.target.value as 'image' | 'video')}
-                  className="w-full px-4 py-2.5 pr-10 rounded-xl border border-input bg-background text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-ring/20">
-                  <option value="image">Image</option>
-                  <option value="video">Video</option>
-                </select>
-                <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+
+              {/* Image upload area */}
+              <div className="sm:col-span-2">
+                {galleryPreview ? (
+                  <div className="relative rounded-xl overflow-hidden border border-border h-48">
+                    <img src={galleryPreview} alt="Preview" className="w-full h-full object-cover" />
+                    <button onClick={clearFile}
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-foreground/40 text-primary-foreground hover:bg-destructive transition-colors">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                    <div className="absolute bottom-2 left-2 bg-foreground/50 text-primary-foreground text-[10px] px-2 py-1 rounded-md">
+                      {galleryFile?.name}
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFileSelect(f); }}
+                    className="border-2 border-dashed border-border rounded-xl h-36 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-all group"
+                  >
+                    <CloudUpload className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <p className="text-sm text-muted-foreground">Click or drag & drop an image</p>
+                    <p className="text-[10px] text-muted-foreground">JPG, PNG, WEBP up to 10 MB</p>
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={e => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }}
+                />
               </div>
-              <div className="relative">
-                <Link2 className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input placeholder="Image/Video URL" value={galleryUrl} onChange={e => setGalleryUrl(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
-              </div>
+
+              {/* Fallback URL input */}
+              {!galleryFile && (
+                <div className="sm:col-span-2">
+                  <p className="text-[10px] text-muted-foreground mb-1.5 ml-1">Or paste an image URL</p>
+                  <div className="relative">
+                    <Link2 className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                    <input placeholder="https://..." value={galleryUrl} onChange={e => setGalleryUrl(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring/20" />
+                  </div>
+                </div>
+              )}
+
               <div className="sm:col-span-2 flex justify-end gap-2">
-                <button onClick={() => setShowUpload(false)} className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:bg-muted transition-colors">Cancel</button>
-                <button onClick={handleGalleryUpload} disabled={creatingGallery}
+                <button onClick={() => { setShowUpload(false); clearFile(); }} className="px-4 py-2 rounded-xl border border-border text-sm text-muted-foreground hover:bg-muted transition-colors">Cancel</button>
+                <button onClick={handleGalleryUpload} disabled={creatingGallery || uploading}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl gradient-primary text-primary-foreground text-sm font-medium disabled:opacity-60">
-                  {creatingGallery && <Loader2 className="w-3.5 h-3.5 animate-spin" />} Add to Gallery
+                  {(creatingGallery || uploading) && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  {uploading ? 'Uploading...' : 'Add to Gallery'}
                 </button>
               </div>
             </div>
@@ -170,8 +241,8 @@ const MediaManagement = () => {
                 <p className="text-xs text-muted-foreground">{sermon.speaker}{sermon.duration ? ` · ${sermon.duration}` : ''}</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{new Date(sermon.date).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
               </div>
-              {(sermon as any).url && (
-                <a href={(sermon as any).url} target="_blank" rel="noopener noreferrer"
+              {sermon.url && (
+                <a href={sermon.url} target="_blank" rel="noopener noreferrer"
                   className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-primary transition-colors shrink-0" title="Open media link">
                   <Upload className="w-4 h-4" />
                 </a>
@@ -191,13 +262,18 @@ const MediaManagement = () => {
           {galleryItems.map((item, i) => (
             <motion.div key={item.id} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }}
               className="bg-card rounded-xl border border-border overflow-hidden shadow-sm group">
-              <div className={`aspect-square flex items-center justify-center relative ${i % 3 === 0 ? 'gradient-primary' : i % 3 === 1 ? 'gradient-gold' : 'gradient-hero'}`}>
-                {(item as any).url ? (
-                  <img src={(item as any).url} alt={item.title} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <div className="aspect-square relative overflow-hidden bg-muted">
+                {item.url ? (
+                  <img src={item.url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                 ) : item.type === 'video' ? (
-                  <Play className="w-8 h-8 text-primary-foreground" />
+                  <div className="w-full h-full gradient-primary flex items-center justify-center">
+                    <Play className="w-8 h-8 text-primary-foreground" />
+                  </div>
                 ) : (
-                  <Image className="w-8 h-8 text-primary-foreground/70" />
+                  <div className="w-full h-full gradient-hero flex items-center justify-center">
+                    <Image className="w-8 h-8 text-primary-foreground/70" />
+                  </div>
                 )}
                 <button onClick={() => handleDeleteGallery(item.id, item.title)}
                   className="absolute top-2 right-2 p-1.5 rounded-lg bg-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity text-primary-foreground hover:bg-destructive">
