@@ -62,32 +62,38 @@ const About = () => {
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="grid grid-cols-2 gap-4"
+              className="space-y-4"
             >
-              <Card className="bg-primary/5 border-primary/10">
-                <CardContent className="pt-6 text-center">
-                  <p className="text-3xl font-bold text-primary">4</p>
-                  <p className="text-sm text-muted-foreground mt-1">Cell Groups</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-accent/5 border-accent/10">
-                <CardContent className="pt-6 text-center">
-                  <p className="text-3xl font-bold text-accent">5</p>
-                  <p className="text-sm text-muted-foreground mt-1">Ministry Teams</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-accent/5 border-accent/10">
-                <CardContent className="pt-6 text-center">
-                  <p className="text-3xl font-bold text-accent">52</p>
-                  <p className="text-sm text-muted-foreground mt-1">Sundays a Year</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-primary/5 border-primary/10">
-                <CardContent className="pt-6 text-center">
-                  <p className="text-3xl font-bold text-primary">1</p>
-                  <p className="text-sm text-muted-foreground mt-1">Body in Christ</p>
-                </CardContent>
-              </Card>
+              <div className="grid grid-cols-2 gap-3 rounded-2xl overflow-hidden shadow-church">
+                <img src={youthsGroupImg} alt="PEFA Youth group" className="w-full h-40 object-cover rounded-xl" />
+                <img src={growFaithImg} alt="Growing in faith" className="w-full h-40 object-cover rounded-xl" />
+              </div>
+              <div className="grid grid-cols-4 gap-3">
+                <Card className="bg-primary/5 border-primary/10">
+                  <CardContent className="pt-4 pb-3 text-center">
+                    <p className="text-2xl font-bold text-primary">4</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Cell Groups</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-accent/5 border-accent/10">
+                  <CardContent className="pt-4 pb-3 text-center">
+                    <p className="text-2xl font-bold text-accent">5</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Ministries</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-accent/5 border-accent/10">
+                  <CardContent className="pt-4 pb-3 text-center">
+                    <p className="text-2xl font-bold text-accent">52</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Sundays</p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-primary/5 border-primary/10">
+                  <CardContent className="pt-4 pb-3 text-center">
+                    <p className="text-2xl font-bold text-primary">1</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Body</p>
+                  </CardContent>
+                </Card>
+              </div>
             </motion.div>
           </div>
         </div>
