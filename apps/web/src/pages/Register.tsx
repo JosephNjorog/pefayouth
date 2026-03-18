@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth, isAdminRole } from '@/contexts/AuthContext';
 import { Church, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import youthsGroupImg from '@/assets/youths-group.jpg';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -38,7 +37,7 @@ const Register = () => {
     <div className="min-h-screen bg-background flex flex-col lg:flex-row">
       {/* Hero Section */}
       <div className="relative h-56 sm:h-64 lg:h-auto lg:flex-1 overflow-hidden">
-        <img src={youthsGroupImg} alt="PEFA Youth community" className="w-full h-full object-cover" />
+        <img src="/images/IMG_20250308_122824.jpg" alt="PEFA Youth community" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-church-teal-dark/80 via-church-teal-dark/60 to-background" />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>

@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion';
 import { Heart, Eye, Target, BookOpen, Users, Handshake, Sparkles, Shield } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import youthsGroupImg from '@/assets/youths-group.jpg';
-import growFaithImg from '@/assets/grow-faith.jpg';
 
 const coreValues = [
   { icon: BookOpen, title: 'Word-Centered', description: 'We anchor every activity and decision in the truth of God\'s Word.' },
@@ -65,8 +63,8 @@ const About = () => {
               className="space-y-4"
             >
               <div className="grid grid-cols-2 gap-3 rounded-2xl overflow-hidden shadow-church">
-                <img src={youthsGroupImg} alt="PEFA Youth group" className="w-full h-40 object-cover rounded-xl" />
-                <img src={growFaithImg} alt="Growing in faith" className="w-full h-40 object-cover rounded-xl" />
+                <img src="/images/schoolvisitimg3.jpg" alt="PEFA Youth in the community" className="w-full h-40 object-cover rounded-xl" />
+                <img src="/images/schoolvisitimg4.jpg" alt="Youth outreach" className="w-full h-40 object-cover rounded-xl" />
               </div>
               <div className="grid grid-cols-4 gap-3">
                 <Card className="bg-primary/5 border-primary/10">

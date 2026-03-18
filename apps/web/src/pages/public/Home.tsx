@@ -4,29 +4,20 @@ import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { features, cellGroups } from '@/data/publicPageData';
-import churchHero from '@/assets/church-hero.jpg';
 
-import youthCommunityImg from '@/assets/youth-community.jpg';
-import eventsRetreatsImg from '@/assets/events-retreats.jpg';
-import sermonsMediaImg from '@/assets/sermons-media.jpg';
-import growFaithImg from '@/assets/grow-faith.jpg';
-import fishersImg from '@/assets/fishers-of-men.jpg';
-import oneMoreSoulImg from '@/assets/one-more-soul.jpg';
-import byGraceImg from '@/assets/by-grace.jpg';
-import youthsImg from '@/assets/youths-group.jpg';
-
+// Real church photos served from public/images/
+const heroImg            = '/images/herobg.jpg';
 const featureImages: Record<string, string> = {
-  'youth-community': youthCommunityImg,
-  'events-retreats': eventsRetreatsImg,
-  'sermons-media': sermonsMediaImg,
-  'grow-in-faith': growFaithImg,
+  'youth-community': '/images/IMG_20250308_090922.jpg',
+  'events-retreats': '/images/IMG_20241215_115457.jpg',
+  'sermons-media':   '/images/IMG_20240831_130946.jpg',
+  'grow-in-faith':   '/images/IMG_20250209_131746.jpg',
 };
-
 const groupImages: Record<string, string> = {
-  'youths': youthsImg,
-  'fishers-of-men': fishersImg,
-  'one-more-soul': oneMoreSoulImg,
-  'by-grace': byGraceImg,
+  'youths':          '/images/IMG_20250308_095513.jpg',
+  'fishers-of-men':  '/images/schoolvisit.jpg',
+  'one-more-soul':   '/images/IMG_20240831_131023.jpg',
+  'by-grace':        '/images/IMG_20240831_152147.jpg',
 };
 
 const Home = () => {
@@ -35,7 +26,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <img src={churchHero} alt="Youth worship" className="w-full h-full object-cover" />
+          <img src={heroImg} alt="PEFA Youth worship" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-church-teal-dark/90 via-church-teal-dark/70 to-church-teal-dark/50" />
         </div>
         <div className="relative container max-w-6xl mx-auto px-4 py-24 sm:py-32 lg:py-40">

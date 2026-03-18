@@ -5,16 +5,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { features } from '@/data/publicPageData';
 
-import youthCommunityImg from '@/assets/youth-community.jpg';
-import eventsRetreatsImg from '@/assets/events-retreats.jpg';
-import sermonsMediaImg from '@/assets/sermons-media.jpg';
-import growFaithImg from '@/assets/grow-faith.jpg';
-
 const featureImages: Record<string, string> = {
-  'youth-community': youthCommunityImg,
-  'events-retreats': eventsRetreatsImg,
-  'sermons-media': sermonsMediaImg,
-  'grow-in-faith': growFaithImg,
+  'youth-community': '/images/IMG_20250308_090922.jpg',
+  'events-retreats': '/images/IMG_20241215_115457.jpg',
+  'sermons-media':   '/images/IMG_20240831_130946.jpg',
+  'grow-in-faith':   '/images/IMG_20250209_131746.jpg',
 };
 
 const FeatureDetail = () => {
