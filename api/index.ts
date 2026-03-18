@@ -25,9 +25,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // ── Auth ──────────────────────────────────────────────────────────────────
     if (seg0 === 'auth') {
-      if (seg1 === 'login')  return await authLogin(req, res);
-      if (seg1 === 'logout') return await authLogout(req, res);
-      if (seg1 === 'me')     return await authMe(req, res);
+      if (seg1 === 'login')    return await authLogin(req, res);
+      if (seg1 === 'logout')   return await authLogout(req, res);
+      if (seg1 === 'me')       return await authMe(req, res);
+      if (seg1 === 'register') return await authRegister(req, res);
     }
 
     // ── Members ───────────────────────────────────────────────────────────────
