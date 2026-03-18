@@ -3,6 +3,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { db, users, members, events, attendance, payments, sermons, galleryItems, newsletters, expenses, budgetItems, offerings, meetingNotes } from '../db/client';
 import { eq, ilike, or, desc, asc, gte, lte, and, sum, count } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { signJWT, setAuthCookie, clearAuthCookie, requireAuth, requireRole } from '../lib/auth';
 import { initiateStkPush, parseMpesaCallback, type DarajaCallbackBody } from '../lib/mpesa';
 import { ok, err } from '../lib/helpers';
@@ -103,6 +104,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (seg1 === 'summary') return await financeSummary(req, res);
       if (seg1 === 'reports') return await financeReports(req, res);
       if (seg1 === 'stats')   return await financeStats(req, res);
+    }
+
+    // ── Cloudinary ────────────────────────────────────────────────────────────
+    if (seg0 === 'cloudinary') {
+      if (seg1 === 'sign') return await cloudinarySign(req, res);
     }
 
     return err(res, 'Not found', 404);
