@@ -3,6 +3,28 @@ import { useSermons, useGallery } from '@/hooks/useApi';
 import { Play, Headphones, Image, Video, Clock, User, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import churchHeroImg from '@/assets/church-hero.jpg';
+import youthCommunityImg from '@/assets/youth-community.jpg';
+import eventsRetreatsImg from '@/assets/events-retreats.jpg';
+import sermonsMediaImg from '@/assets/sermons-media.jpg';
+import growFaithImg from '@/assets/grow-faith.jpg';
+import fishersImg from '@/assets/fishers-of-men.jpg';
+import oneMoreSoulImg from '@/assets/one-more-soul.jpg';
+import byGraceImg from '@/assets/by-grace.jpg';
+import youthsGroupImg from '@/assets/youths-group.jpg';
+
+const churchPhotos = [
+  { src: churchHeroImg,     caption: 'Worship Service' },
+  { src: youthsGroupImg,    caption: 'Youth Group' },
+  { src: youthCommunityImg, caption: 'Community' },
+  { src: eventsRetreatsImg, caption: 'Events & Retreats' },
+  { src: growFaithImg,      caption: 'Growing in Faith' },
+  { src: sermonsMediaImg,   caption: 'Sermons & Media' },
+  { src: fishersImg,        caption: 'Fishers of Men' },
+  { src: oneMoreSoulImg,    caption: 'One More Soul' },
+  { src: byGraceImg,        caption: 'By Grace' },
+];
+
 const Media = () => {
   const [tab, setTab] = useState<'sermons' | 'gallery'>('sermons');
   const [sermonFilter, setSermonFilter] = useState<'all' | 'video' | 'audio'>('all');
@@ -67,7 +89,7 @@ const Media = () => {
             ))}
           </div>
 
-          {/* Sermons Grid - 1 col mobile, 2 col desktop */}
+          {/* Sermons Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {filteredSermons.map((sermon, i) => (
               <motion.div
@@ -99,50 +121,91 @@ const Media = () => {
                   <h3 className="text-sm font-semibold">{sermon.title}</h3>
                   <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{sermon.description}</p>
                   <div className="flex items-center gap-3 mt-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <User className="w-3 h-3" />
-                      {sermon.speaker}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {sermon.duration}
-                    </span>
-                    <span className="ml-auto">
-                      {new Date(sermon.date).toLocaleDateString('en', { month: 'short', day: 'numeric' })}
-                    </span>
+                    <span className="flex items-center gap-1"><User className="w-3 h-3" />{sermon.speaker}</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{sermon.duration}</span>
+                    <span className="ml-auto">{new Date(sermon.date).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</span>
                   </div>
                 </div>
               </motion.div>
             ))}
+            {filteredSermons.length === 0 && (
+              <p className="text-sm text-muted-foreground col-span-2 text-center py-8">No sermons found.</p>
+            )}
           </div>
         </>
       )}
 
       {tab === 'gallery' && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
-          {galleryItems.map((item, i) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-card rounded-xl border border-border overflow-hidden shadow-sm cursor-pointer hover:shadow-church transition-all"
-            >
-              <div className={`aspect-square flex items-center justify-center ${
-                i % 3 === 0 ? 'gradient-primary' : i % 3 === 1 ? 'gradient-gold' : 'gradient-hero'
-              }`}>
-                {item.type === 'video' ? (
-                  <Play className="w-8 h-8 text-primary-foreground" />
-                ) : (
-                  <Image className="w-8 h-8 text-primary-foreground/70" />
-                )}
+        <div className="space-y-6">
+          {/* Church Photos — static assets */}
+          <div>
+            <h2 className="text-sm font-semibold mb-3">Our Photos</h2>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+              {churchPhotos.map((photo, i) => (
+                <motion.div
+                  key={photo.caption}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="rounded-xl overflow-hidden shadow-sm border border-border group cursor-pointer"
+                >
+                  <div className="aspect-square overflow-hidden">
+                    <img
+                      src={photo.src}
+                      alt={photo.caption}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="p-2 bg-card">
+                    <p className="text-xs font-medium truncate">{photo.caption}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Gallery items from DB */}
+          {galleryItems.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold mb-3">Events Gallery</h2>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {galleryItems.map((item, i) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="bg-card rounded-xl border border-border overflow-hidden shadow-sm cursor-pointer hover:shadow-church transition-all group"
+                  >
+                    <div className="aspect-square overflow-hidden">
+                      {item.url ? (
+                        <img
+                          src={item.url}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      ) : (
+                        <div className={`w-full h-full flex items-center justify-center ${
+                          i % 3 === 0 ? 'gradient-primary' : i % 3 === 1 ? 'gradient-gold' : 'gradient-hero'
+                        }`}>
+                          {item.type === 'video' ? (
+                            <Play className="w-8 h-8 text-primary-foreground" />
+                          ) : (
+                            <Image className="w-8 h-8 text-primary-foreground/70" />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-2.5">
+                      <p className="text-xs font-medium truncate">{item.title}</p>
+                      <p className="text-[10px] text-muted-foreground">{item.event}</p>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-              <div className="p-2.5">
-                <p className="text-xs font-medium truncate">{item.title}</p>
-                <p className="text-[10px] text-muted-foreground">{item.event}</p>
-              </div>
-            </motion.div>
-          ))}
+            </div>
+          )}
         </div>
       )}
     </div>
