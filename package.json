@@ -13,6 +13,7 @@
     "build:web": "cd apps/web && npm run build",
     "db:push": "drizzle-kit push",
     "db:seed": "bun run db/seed.ts",
+    "db:seed-gallery": "npx tsx db/seed-gallery.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
