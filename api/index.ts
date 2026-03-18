@@ -800,3 +800,29 @@ async function financeStats(req: VercelRequest, res: VercelResponse) {
     totalSpent,
   });
 }
+
+// ─── Cloudinary ───────────────────────────────────────────────────────────────
+
+async function cloudinarySign(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') return err(res, 'Method not allowed', 405);
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  const folder = (req.body?.folder as string) || 'pefayouth/gallery';
+  const timestamp = Math.round(Date.now() / 1000);
+  const apiSecret = process.env.CLOUDINARY_API_SECRET || '';
+
+  // Cloudinary signature: SHA1(param_string + api_secret)
+  const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
+  const signature = crypto.createHash('sha1')
+    .update(paramsToSign + apiSecret)
+    .digest('hex');
+
+  return ok(res, {
+    signature,
+    timestamp,
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    folder,
+  });
+}
