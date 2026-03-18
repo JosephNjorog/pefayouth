@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth, isAdminRole } from "@/contexts/AuthContext";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import { PublicLayout } from "@/components/PublicLayout";
 import { MemberLayout } from "@/components/MemberLayout";
@@ -64,6 +65,15 @@ const LoginRoute = () => {
   return <Login />;
 };
 
+const RegisterRoute = () => {
+  const { isAuthenticated, user, loading } = useAuth();
+  if (loading) return <Spinner />;
+  if (isAuthenticated && user) {
+    return <Navigate to={isAdminRole(user.role) ? '/admin' : '/member'} replace />;
+  }
+  return <Register />;
+};
+
 const adminRoles = ['super_admin', 'finance_admin', 'secretary'];
 const financeRoles = ['super_admin', 'finance_admin'];
 const secretaryRoles = ['super_admin', 'secretary'];
@@ -84,6 +94,7 @@ const App = () => (
             <Route path="/events" element={<PublicLayout><PublicEvents /></PublicLayout>} />
             <Route path="/sermons" element={<PublicLayout><PublicSermons /></PublicLayout>} />
             <Route path="/login" element={<LoginRoute />} />
+            <Route path="/register" element={<RegisterRoute />} />
 
             {/* Member Routes */}
             <Route path="/member" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><MemberDashboard /></MemberLayout></ProtectedRoute>} />

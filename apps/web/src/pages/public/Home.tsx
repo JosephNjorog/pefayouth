@@ -57,10 +57,10 @@ const Home = () => {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
-                to="/about"
+                to="/register"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm gradient-gold text-accent-foreground shadow-gold hover:shadow-lg transition-all"
               >
-                Learn About Us <ArrowRight className="w-4 h-4" />
+                Join Us <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 to="/login"
@@ -207,14 +207,22 @@ const Home = () => {
           >
             <h2 className="text-2xl sm:text-3xl font-bold text-primary-foreground mb-4">Ready to Join Our Community?</h2>
             <p className="text-primary-foreground/80 max-w-lg mx-auto mb-8">
-              Sign in to access your member dashboard, register for events, and connect with fellow youth.
+              Create your account to access your member dashboard, register for events, and connect with fellow youth.
             </p>
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-sm gradient-gold text-accent-foreground shadow-gold hover:shadow-lg transition-all"
-            >
-              Sign In Now <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-sm gradient-gold text-accent-foreground shadow-gold hover:shadow-lg transition-all"
+              >
+                Create Account <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-sm bg-primary-foreground/10 text-primary-foreground border border-primary-foreground/20 hover:bg-primary-foreground/20 transition-all"
+              >
+                Sign In
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
