@@ -69,18 +69,22 @@ const FOLDER     = 'pefayouth/gallery';
 
 // ── Assets to upload ──────────────────────────────────────────────────────────
 const assets = [
-  { file: 'church-hero.jpg',      title: 'Worship Service',    event: 'Sunday Service' },
-  { file: 'youths-group.jpg',     title: 'Youth Group',        event: 'Youth Fellowship' },
-  { file: 'youth-community.jpg',  title: 'Community',          event: 'Youth Outreach' },
-  { file: 'events-retreats.jpg',  title: 'Events & Retreats',  event: 'Youth Retreat 2025' },
-  { file: 'grow-faith.jpg',       title: 'Growing in Faith',   event: 'Bible Study' },
-  { file: 'sermons-media.jpg',    title: 'Sermons & Media',    event: 'Sunday Service' },
-  { file: 'fishers-of-men.jpg',   title: 'Fishers of Men',     event: 'Fishers Cell Group' },
-  { file: 'one-more-soul.jpg',    title: 'One More Soul',      event: 'One More Soul Cell' },
-  { file: 'by-grace.jpg',         title: 'By Grace',           event: 'By Grace Cell Group' },
+  { file: 'herobg.jpg',                   title: 'Worship Service',     event: 'Sunday Service' },
+  { file: 'IMG_20250308_095513.jpg',       title: 'Youth Fellowship',    event: 'Youth Fellowship' },
+  { file: 'IMG_20250308_090922.jpg',       title: 'Youth Community',     event: 'Youth Outreach' },
+  { file: 'IMG_20241215_115457.jpg',       title: 'December Event 2024', event: 'December 2024' },
+  { file: 'IMG_20250209_131746.jpg',       title: 'February 2025',       event: 'February 2025' },
+  { file: 'IMG_20240831_130946.jpg',       title: 'August 2024 Service', event: 'Sunday Service' },
+  { file: 'IMG_20240831_131023.jpg',       title: 'Youth Gathering',     event: 'Youth Fellowship' },
+  { file: 'IMG_20240831_152147.jpg',       title: 'Fellowship',          event: 'Youth Fellowship' },
+  { file: 'IMG_20250308_122824.jpg',       title: 'March 2025 Event',    event: 'March 2025' },
+  { file: 'schoolvisit.jpg',              title: 'School Outreach',     event: 'Community Outreach' },
+  { file: 'schoolvisitimg2.jpg',          title: 'School Visit',        event: 'Community Outreach' },
+  { file: 'schoolvisitimg3.jpg',          title: 'Community Outreach',  event: 'Community Outreach' },
+  { file: 'schoolvisitimg4.jpg',          title: 'Youth Outreach',      event: 'Community Outreach' },
 ];
 
-const assetsDir = path.resolve(__dirname, '../apps/web/src/assets');
+const assetsDir = path.resolve(__dirname, '../apps/web/public/images');
 
 // ── Upload a single file to Cloudinary ────────────────────────────────────────
 async function uploadFile(filePath: string): Promise<string> {
