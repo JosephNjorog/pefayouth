@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authLogin, authLogout, authMe } from '@/lib/api';
+import { authLogin, authLogout, authMe, authRegister } from '@/lib/api';
 
 export type UserRole = 'member' | 'super_admin' | 'finance_admin' | 'secretary';
 
@@ -15,6 +15,7 @@ interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
