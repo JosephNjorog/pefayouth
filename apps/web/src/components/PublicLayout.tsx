@@ -52,9 +52,15 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center gap-2">
             <NavLink
               to="/login"
-              className="px-5 py-2 rounded-xl text-sm font-semibold gradient-primary text-primary-foreground shadow-church hover:shadow-lg transition-all"
+              className="hidden sm:inline-flex px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
             >
               Sign In
+            </NavLink>
+            <NavLink
+              to="/register"
+              className="px-5 py-2 rounded-xl text-sm font-semibold gradient-gold text-accent-foreground shadow-gold hover:shadow-lg transition-all"
+            >
+              Get Started
             </NavLink>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -92,6 +98,22 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
                     </NavLink>
                   );
                 })}
+                <div className="pt-2 pb-1 flex flex-col gap-2">
+                  <NavLink
+                    to="/register"
+                    onClick={() => setMobileOpen(false)}
+                    className="block text-center px-4 py-2.5 rounded-xl text-sm font-semibold gradient-gold text-accent-foreground shadow-gold"
+                  >
+                    Get Started
+                  </NavLink>
+                  <NavLink
+                    to="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="block text-center px-4 py-2.5 rounded-xl text-sm font-medium bg-muted text-muted-foreground hover:text-foreground transition-all"
+                  >
+                    Sign In
+                  </NavLink>
+                </div>
               </nav>
             </motion.div>
           )}
