@@ -5,16 +5,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cellGroups } from '@/data/publicPageData';
 
-import fishersImg from '@/assets/fishers-of-men.jpg';
-import oneMoreSoulImg from '@/assets/one-more-soul.jpg';
-import byGraceImg from '@/assets/by-grace.jpg';
-import youthsImg from '@/assets/youths-group.jpg';
-
 const groupImages: Record<string, string> = {
-  'youths': youthsImg,
-  'fishers-of-men': fishersImg,
-  'one-more-soul': oneMoreSoulImg,
-  'by-grace': byGraceImg,
+  'youths':         '/images/IMG_20250308_095513.jpg',
+  'fishers-of-men': '/images/schoolvisit.jpg',
+  'one-more-soul':  '/images/IMG_20240831_131023.jpg',
+  'by-grace':       '/images/IMG_20240831_152147.jpg',
 };
 
 const CellGroupDetail = () => {

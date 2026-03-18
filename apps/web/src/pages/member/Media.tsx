@@ -3,26 +3,21 @@ import { useSermons, useGallery } from '@/hooks/useApi';
 import { Play, Headphones, Image, Video, Clock, User, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import churchHeroImg from '@/assets/church-hero.jpg';
-import youthCommunityImg from '@/assets/youth-community.jpg';
-import eventsRetreatsImg from '@/assets/events-retreats.jpg';
-import sermonsMediaImg from '@/assets/sermons-media.jpg';
-import growFaithImg from '@/assets/grow-faith.jpg';
-import fishersImg from '@/assets/fishers-of-men.jpg';
-import oneMoreSoulImg from '@/assets/one-more-soul.jpg';
-import byGraceImg from '@/assets/by-grace.jpg';
-import youthsGroupImg from '@/assets/youths-group.jpg';
-
+// Real church photos from public/images/
 const churchPhotos = [
-  { src: churchHeroImg,     caption: 'Worship Service' },
-  { src: youthsGroupImg,    caption: 'Youth Group' },
-  { src: youthCommunityImg, caption: 'Community' },
-  { src: eventsRetreatsImg, caption: 'Events & Retreats' },
-  { src: growFaithImg,      caption: 'Growing in Faith' },
-  { src: sermonsMediaImg,   caption: 'Sermons & Media' },
-  { src: fishersImg,        caption: 'Fishers of Men' },
-  { src: oneMoreSoulImg,    caption: 'One More Soul' },
-  { src: byGraceImg,        caption: 'By Grace' },
+  { src: '/images/herobg.jpg',                 caption: 'Worship Service' },
+  { src: '/images/IMG_20250308_095513.jpg',     caption: 'Youth Fellowship' },
+  { src: '/images/IMG_20250308_090922.jpg',     caption: 'Youth Community' },
+  { src: '/images/IMG_20241215_115457.jpg',     caption: 'December Event 2024' },
+  { src: '/images/IMG_20250209_131746.jpg',     caption: 'February 2025' },
+  { src: '/images/IMG_20240831_130946.jpg',     caption: 'August 2024 Service' },
+  { src: '/images/IMG_20240831_131023.jpg',     caption: 'Youth Gathering' },
+  { src: '/images/IMG_20240831_152147.jpg',     caption: 'Fellowship' },
+  { src: '/images/IMG_20250308_122824.jpg',     caption: 'March 2025 Event' },
+  { src: '/images/schoolvisit.jpg',             caption: 'School Outreach' },
+  { src: '/images/schoolvisitimg2.jpg',         caption: 'School Visit' },
+  { src: '/images/schoolvisitimg3.jpg',         caption: 'Community Outreach' },
+  { src: '/images/schoolvisitimg4.jpg',         caption: 'Youth Outreach' },
 ];
 
 const Media = () => {
