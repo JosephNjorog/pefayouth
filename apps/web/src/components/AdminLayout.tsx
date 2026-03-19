@@ -6,6 +6,7 @@ import {
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface SidebarItem {
   to: string;
@@ -130,6 +131,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               <p className="text-sm font-medium truncate">{user?.name}</p>
               <p className="text-[10px] opacity-60">{roleLabels[user?.role || 'super_admin']}</p>
             </div>
+            <ThemeToggle className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10" />
           </div>
           <button
             onClick={logout}
@@ -154,9 +156,12 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <p className="text-[10px] text-muted-foreground">{roleLabels[user?.role || 'super_admin']}</p>
               </div>
             </div>
-            <button onClick={logout} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-              <LogOut className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <button onClick={logout} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </header>
 
