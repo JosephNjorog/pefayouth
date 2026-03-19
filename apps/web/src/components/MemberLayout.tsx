@@ -2,6 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Home, Calendar, Play, User, LogOut, Church } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navItems = [
   { to: '/member', icon: Home, label: 'Home' },
@@ -68,8 +69,9 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="p-3 border-t border-border">
+        {/* Logout + Theme */}
+        <div className="p-3 border-t border-border space-y-1">
+          <ThemeToggle variant="label" className="w-full" />
           <button
             onClick={logout}
             className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
@@ -103,16 +105,20 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
                 <p className="text-xs text-muted-foreground">Welcome back, {user?.name?.split(' ')[0]}</p>
               </div>
             </div>
-            {/* Mobile logout */}
-            <button
-              onClick={logout}
-              className="lg:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              aria-label="Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
+            {/* Mobile: theme + logout */}
+            <div className="lg:hidden flex items-center gap-1">
+              <ThemeToggle />
+              <button
+                onClick={logout}
+                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                aria-label="Logout"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
             {/* Desktop user badge */}
             <div className="hidden lg:flex items-center gap-3">
+              <ThemeToggle />
               <div className="text-right">
                 <p className="text-sm font-medium">{user?.name}</p>
                 <p className="text-xs text-muted-foreground">Member</p>
