@@ -2,6 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { Church, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -50,6 +51,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
           </nav>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <NavLink
               to="/login"
               className="hidden sm:inline-flex px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
@@ -113,6 +115,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
                   >
                     Sign In
                   </NavLink>
+                  <ThemeToggle variant="label" className="justify-center" />
                 </div>
               </nav>
             </motion.div>
