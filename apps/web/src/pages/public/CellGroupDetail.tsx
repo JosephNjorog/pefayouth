@@ -8,7 +8,7 @@ import { cellGroups } from '@/data/publicPageData';
 const groupImages: Record<string, string> = {
   'youths':         '/images/IMG_20250308_095513.jpg',
   'fishers-of-men': '/images/schoolvisit.jpg',
-  'one-more-soul':  '/images/IMG_20240831_131023.jpg',
+  'one-more-soul':  '/images/schoolvisitimg4.jpg',
   'by-grace':       '/images/IMG_20240831_152147.jpg',
 };
 
