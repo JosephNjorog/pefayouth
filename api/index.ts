@@ -532,6 +532,16 @@ async function galleryCollection(req: VercelRequest, res: VercelResponse) {
 }
 
 async function galleryById(req: VercelRequest, res: VercelResponse, id: string) {
+  if (req.method === 'PATCH') {
+    const user = await requireRole(req, res, ['super_admin', 'secretary']);
+    if (!user) return;
+    const { title, event } = req.body || {};
+    const [updated] = await db.update(galleryItems)
+      .set({ ...(title && { title }), ...(event !== undefined && { event }) })
+      .where(eq(galleryItems.id, id))
+      .returning();
+    return ok(res, updated);
+  }
   if (req.method === 'DELETE') {
     const user = await requireRole(req, res, ['super_admin', 'secretary']);
     if (!user) return;
