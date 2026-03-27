@@ -176,11 +176,17 @@ const NotificationsPage = () => {
 
                   <p className="text-sm font-semibold text-foreground leading-snug">{n.title}</p>
 
-                  <div className={`text-sm text-muted-foreground leading-relaxed mt-1.5 space-y-1 ${isExpanded ? '' : 'line-clamp-3'}`}>
-                    {n.message.split('\n').map((line, idx) => (
-                      <p key={idx}>{line}</p>
-                    ))}
-                  </div>
+                  {isExpanded ? (
+                    <div className="text-sm text-muted-foreground leading-relaxed mt-1.5 space-y-1 block overflow-visible">
+                      {n.message.split('\n').map((line, idx) => (
+                        <p key={idx} className="break-words">{line}</p>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground leading-relaxed mt-1.5 line-clamp-3 break-words">
+                      {n.message.replace(/\n/g, ' ')}
+                    </p>
+                  )}
 
                   {isExpanded ? (
                     <button

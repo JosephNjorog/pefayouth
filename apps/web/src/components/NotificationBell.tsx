@@ -235,11 +235,17 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
                             <span className="text-[10px] text-muted-foreground/60 ml-auto">{timeAgo(n.createdAt)}</span>
                           </div>
                           <p className="text-xs font-semibold text-foreground mt-0.5 leading-snug">{n.title}</p>
-                          <div className={`text-xs text-muted-foreground leading-relaxed mt-1 space-y-0.5 ${isExpanded ? '' : 'line-clamp-3'}`}>
-                            {n.message.split('\n').map((line, i) => (
-                              <p key={i}>{line}</p>
-                            ))}
-                          </div>
+                          {isExpanded ? (
+                            <div className="text-xs text-muted-foreground leading-relaxed mt-1 space-y-0.5 block overflow-visible">
+                              {n.message.split('\n').map((line, i) => (
+                                <p key={i} className="break-words">{line}</p>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-muted-foreground leading-relaxed mt-1 line-clamp-3 break-words">
+                              {n.message.replace(/\n/g, ' ')}
+                            </p>
+                          )}
 
                           {isExpanded ? (
                             <button
