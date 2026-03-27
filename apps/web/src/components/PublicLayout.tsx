@@ -188,7 +188,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <div className="mt-10 pt-6 border-t border-primary-foreground/10 text-center text-xs text-primary-foreground/40">
-            © 2026 PEFA Youth Church Kajiado. All rights reserved.
+            © 2026 PEFA Youth Works Kajiado. All rights reserved.
           </div>
         </div>
       </footer>
