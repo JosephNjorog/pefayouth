@@ -248,6 +248,7 @@ const MemberDashboard = () => {
             <Bell className="w-4 h-4 text-primary" />
             <h3 className="font-semibold text-sm">Recent Updates</h3>
           </div>
+          <Link to="/member/notifications" className="text-xs text-primary font-medium">View All</Link>
         </div>
         <div className="divide-y divide-border">
           {notifications.slice(0, 5).map((n: AppNotification) => {
