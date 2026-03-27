@@ -7,7 +7,7 @@ import { features } from '@/data/publicPageData';
 
 const featureImages: Record<string, string> = {
   'youth-community': '/images/herobg.jpg',
-  'events-retreats': 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&q=80',
+  'events-retreats': '/images/IMG_20240831_152147.jpg',
   'sermons-media':   'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80',
   'grow-in-faith':   '/images/IMG_20250209_131746.jpg',
 };
