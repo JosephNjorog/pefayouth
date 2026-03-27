@@ -46,8 +46,24 @@ const NotificationsPage = () => {
   const { data: notifications = [], isLoading } = useNotifications();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [seenIds, setSeenIds] = useState<Set<string>>(getSeenIds);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Auto-expand notification referenced in URL hash (e.g. #notif-abc123)
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash.startsWith('#notif-')) {
+      const id = hash.replace('#notif-', '');
+      setExpandedId(id);
+      markRead(id);
+      // Scroll to the element after render
+      setTimeout(() => {
+        document.getElementById(`notif-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.hash, notifications.length]);
 
   const isAdmin = user ? isAdminRole(user.role) : false;
 
@@ -65,9 +81,11 @@ const NotificationsPage = () => {
   };
 
   const markRead = (id: string) => {
-    const next = new Set(seenIds).add(id);
-    setSeenIds(next);
-    saveSeenIds(next);
+    setSeenIds(prev => {
+      const next = new Set(prev).add(id);
+      saveSeenIds(next);
+      return next;
+    });
   };
 
   const markAllRead = () => {
