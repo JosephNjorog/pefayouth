@@ -36,6 +36,7 @@ import Records from "./pages/admin/Records";
 import MemberManagement from "./pages/admin/MemberManagement";
 import Newsletters from "./pages/admin/Newsletters";
 import EventManagement from "./pages/admin/EventManagement";
+import NotificationsPage from "./pages/Notifications";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, staleTime: 30_000 } },
