@@ -112,6 +112,13 @@ export const useDeleteGalleryItem = () => {
   const qc = useQueryClient();
   return useMutation({ mutationFn: api.deleteGalleryItem, onSuccess: () => qc.invalidateQueries({ queryKey: ['gallery'] }) });
 };
+export const useUpdateGalleryItem = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { title?: string; event?: string } }) => api.updateGalleryItem(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['gallery'] }),
+  });
+};
 
 // ─── Newsletters ──────────────────────────────────────────────────────────────
 export const useNewsletters = (params?: { status?: string; category?: string }) =>
