@@ -12,7 +12,7 @@ const coreValues = [
 ];
 
 const leadershipTeam = [
-  { name: 'Bishop Joseph Lomonyak', role: 'Regional Bishop — PEFA Kajiado-Narok Region', description: 'Providing spiritual oversight and visionary leadership for all PEFA churches across the Kajiado-Narok Region.' },
+  { name: 'Mama Timothy', role: 'Matron — PEFA Youth Works Kajiado', description: 'Providing nurturing spiritual leadership and guidance for the youth, walking alongside every young person with wisdom, compassion, and a mother\'s heart for God\'s kingdom.' },
 ];
 
 const About = () => {
