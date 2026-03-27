@@ -20,6 +20,7 @@ const getSidebarItems = (role: UserRole): SidebarItem[] => {
   if (role === 'finance_admin') {
     return [
       { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/admin/notifications', icon: Bell, label: 'Notifications' },
       { to: '/admin/finance', icon: DollarSign, label: 'Payments', section: 'Finance' },
       { to: '/admin/offerings', icon: Heart, label: 'Offerings & Tithes' },
       { to: '/admin/expenses', icon: Receipt, label: 'Expenses' },
@@ -30,6 +31,7 @@ const getSidebarItems = (role: UserRole): SidebarItem[] => {
   if (role === 'secretary') {
     return [
       { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/admin/notifications', icon: Bell, label: 'Notifications' },
       { to: '/admin/members', icon: UserPlus, label: 'Members', section: 'Management' },
       { to: '/admin/event-management', icon: Calendar, label: 'Events' },
       { to: '/admin/newsletters', icon: Newspaper, label: 'Newsletters' },
@@ -41,6 +43,7 @@ const getSidebarItems = (role: UserRole): SidebarItem[] => {
   // super_admin gets everything
   return [
     { to: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/admin/notifications', icon: Bell, label: 'Notifications' },
     { to: '/admin/members', icon: UserPlus, label: 'Members', section: 'Secretary' },
     { to: '/admin/event-management', icon: Calendar, label: 'Events' },
     { to: '/admin/newsletters', icon: Newspaper, label: 'Newsletters' },
