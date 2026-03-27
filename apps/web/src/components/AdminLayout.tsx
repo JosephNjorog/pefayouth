@@ -132,6 +132,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               <p className="text-sm font-medium truncate">{user?.name}</p>
               <p className="text-[10px] opacity-60">{roleLabels[user?.role || 'super_admin']}</p>
             </div>
+            <NotificationBell variant="light" />
             <ThemeToggle className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10" />
           </div>
           <button
