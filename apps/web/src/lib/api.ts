@@ -139,6 +139,8 @@ export const createGalleryItem = (data: Partial<GalleryItem>) =>
   apiFetch<GalleryItem>('/api/gallery', { method: 'POST', body: JSON.stringify(data) });
 export const deleteGalleryItem = (id: string) =>
   apiFetch(`/api/gallery/${id}`, { method: 'DELETE' });
+export const updateGalleryItem = (id: string, data: { title?: string; event?: string }) =>
+  apiFetch<GalleryItem>(`/api/gallery/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
 
 // ─── Newsletters ──────────────────────────────────────────────────────────────
 export interface Newsletter {
