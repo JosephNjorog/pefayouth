@@ -102,6 +102,7 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
                   {location.pathname === '/member/events' && 'Events & Calendar'}
                   {location.pathname.startsWith('/member/events/') && 'Event Details'}
                   {location.pathname === '/member/media' && 'Media Library'}
+                  {location.pathname === '/member/notifications' && 'Notifications'}
                   {location.pathname === '/member/profile' && 'My Profile'}
                 </h2>
                 <p className="text-xs text-muted-foreground">Welcome back, {user?.name?.split(' ')[0]}</p>
