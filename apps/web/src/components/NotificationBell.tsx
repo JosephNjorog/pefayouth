@@ -200,7 +200,7 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
               </div>
 
               {/* List */}
-              <div className="max-h-[60vh] sm:max-h-96 overflow-y-auto divide-y divide-border">
+              <div className="max-h-[55vh] sm:max-h-80 overflow-y-auto divide-y divide-border">
                 {notifications.length === 0 ? (
                   <div className="py-12 text-center text-sm text-muted-foreground">
                     <Bell className="w-8 h-8 mx-auto mb-2 opacity-20" />
@@ -257,6 +257,18 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
                   })
                 )}
               </div>
+
+              {/* Footer - See all */}
+              {notifications.length > 0 && (
+                <div className="border-t border-border px-4 py-2.5 bg-muted/30">
+                  <button
+                    onClick={goToAllNotifications}
+                    className="w-full text-xs font-semibold text-primary hover:underline flex items-center justify-center gap-1.5 py-1"
+                  >
+                    See all notifications <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
             </motion.div>
           </>
         )}
