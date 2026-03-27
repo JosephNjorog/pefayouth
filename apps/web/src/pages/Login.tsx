@@ -41,7 +41,7 @@ const Login = () => {
               <Church className="w-8 h-8 text-accent-foreground" />
             </div>
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary-foreground">PEFA Youth</h1>
-            <p className="text-sm lg:text-base text-primary-foreground/80 mt-1">PEFA Youth Church Management</p>
+            <p className="text-sm lg:text-base text-primary-foreground/80 mt-1">PEFA Youth Works Kajiado</p>
           </motion.div>
         </div>
       </div>
@@ -116,7 +116,7 @@ const Login = () => {
       </motion.div>
 
       <div className="py-6 text-center lg:hidden">
-        <p className="text-xs text-muted-foreground">© 2026 PEFA Youth Church</p>
+        <p className="text-xs text-muted-foreground">© 2026 PEFA Youth Works Kajiado</p>
       </div>
     </div>
   );
