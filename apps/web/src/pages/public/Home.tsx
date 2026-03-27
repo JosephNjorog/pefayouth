@@ -5,18 +5,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { features, cellGroups } from '@/data/publicPageData';
 
-// Real church photos served from public/images/
+// Real church photos served from public/images/ + free Unsplash images
 const heroImg            = '/images/herobg.jpg';
 const featureImages: Record<string, string> = {
-  'youth-community': '/images/IMG_20250308_090922.jpg',
-  'events-retreats': '/images/IMG_20241215_115457.jpg',
-  'sermons-media':   '/images/IMG_20240831_130946.jpg',
+  'youth-community': '/images/herobg.jpg',
+  'events-retreats': 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&q=80',
+  'sermons-media':   'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=1200&q=80',
   'grow-in-faith':   '/images/IMG_20250209_131746.jpg',
 };
 const groupImages: Record<string, string> = {
   'youths':          '/images/IMG_20250308_095513.jpg',
   'fishers-of-men':  '/images/schoolvisit.jpg',
-  'one-more-soul':   '/images/IMG_20240831_131023.jpg',
+  'one-more-soul':   '/images/schoolvisitimg4.jpg',
   'by-grace':        '/images/IMG_20240831_152147.jpg',
 };
 
