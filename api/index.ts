@@ -829,3 +829,52 @@ async function cloudinarySign(req: VercelRequest, res: VercelResponse) {
     folder,
   });
 }
+
+// ─── Notifications Handler ────────────────────────────────────────────────────
+// Derives notifications from recent events, sermons, and published newsletters.
+// No DB table needed — items created in the last 30 days are treated as notifications.
+async function notificationsHandler(req: VercelRequest, res: VercelResponse) {
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  const since = new Date();
+  since.setDate(since.getDate() - 30);
+  const sinceIso = since.toISOString();
+
+  const [recentEvents, recentSermons, recentNewsletters] = await Promise.all([
+    db.select().from(events).where(gte(events.createdAt, since)).orderBy(desc(events.createdAt)).limit(20),
+    db.select().from(sermons).where(gte(sermons.createdAt, since)).orderBy(desc(sermons.createdAt)).limit(20),
+    db.select().from(newsletters)
+      .where(and(gte(newsletters.createdAt, since), eq(newsletters.status, 'published')))
+      .orderBy(desc(newsletters.createdAt)).limit(20),
+  ]);
+
+  const notifications = [
+    ...recentEvents.map(e => ({
+      id: `event-${e.id}`,
+      type: 'event' as const,
+      title: 'New Event',
+      message: `${e.title} — ${e.date} at ${e.time}, ${e.location}`,
+      createdAt: e.createdAt,
+      relatedId: e.id,
+    })),
+    ...recentSermons.map(s => ({
+      id: `sermon-${s.id}`,
+      type: 'sermon' as const,
+      title: 'New Sermon',
+      message: `${s.title} by ${s.speaker}`,
+      createdAt: s.createdAt,
+      relatedId: s.id,
+    })),
+    ...recentNewsletters.map(n => ({
+      id: `newsletter-${n.id}`,
+      type: 'newsletter' as const,
+      title: 'Newsletter',
+      message: n.title,
+      createdAt: n.createdAt,
+      relatedId: n.id,
+    })),
+  ].sort((a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime());
+
+  return ok(res, notifications);
+}
