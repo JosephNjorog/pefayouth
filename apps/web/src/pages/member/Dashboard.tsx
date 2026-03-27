@@ -269,9 +269,9 @@ const MemberDashboard = () => {
                 <div className="flex-1 min-w-0">
                   <p className={`text-[10px] font-semibold uppercase tracking-wide ${iconColor}`}>{label}</p>
                   <p className="text-xs font-semibold text-foreground leading-snug mt-0.5">{n.title}</p>
-                  <div className="text-xs text-muted-foreground leading-relaxed mt-0.5 space-y-0.5 line-clamp-2">
-                    {n.message.split('\n').map((line, i) => <p key={i}>{line}</p>)}
-                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed mt-0.5 line-clamp-2 break-words">
+                    {n.message.replace(/\n/g, ' ')}
+                  </p>
                   <p className={`mt-1.5 inline-flex items-center gap-1 text-xs font-semibold ${iconColor}`}>
                     Read more <ArrowRight className="w-3 h-3" />
                   </p>
