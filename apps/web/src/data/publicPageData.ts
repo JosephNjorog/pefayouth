@@ -74,7 +74,7 @@ export const cellGroups = [
     title: 'Youths',
     tagline: 'The Umbrella',
     description: 'The main youth body that encompasses all cell groups — united in worship, service, and fellowship.',
-    heroDescription: 'Youths is the heartbeat of PEFA Youth Church. It is the overarching body under which all our cell groups operate. Every young person who walks through our doors is part of this vibrant family. Together, we worship, serve, learn, and grow as one body in Christ.',
+    heroDescription: 'Youths is the heartbeat of PEFA Youth Works Kajiado. It is the overarching body under which all our cell groups operate. Every young person who walks through our doors is part of this vibrant family. Together, we worship, serve, learn, and grow as one body in Christ.',
     highlights: [
       'Central gathering every Sunday with all cell groups united',
       'Joint worship services and praise nights',

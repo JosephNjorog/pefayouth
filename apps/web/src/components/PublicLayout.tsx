@@ -172,7 +172,10 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
               <ul className="space-y-2 text-sm text-primary-foreground/60">
                 <li>Sunday Service: 9:00 AM</li>
                 <li>Youth Fellowship: Fridays 6PM</li>
-                <li>Bible Study: Tuesdays 6:30PM</li>
+                <li className="pt-1 font-medium text-primary-foreground/80">Cell Meetings</li>
+                <li>By Grace — Mon 7:00–8:30 PM</li>
+                <li>Interdenominational (Dominion) — Tue 7:00–9:00 PM</li>
+                <li>BBS Virtual (Google Meet) — Wed 9:00–10:00 AM</li>
               </ul>
             </div>
 
