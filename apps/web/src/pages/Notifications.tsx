@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, Calendar, Play, Newspaper, ArrowRight, CheckCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNotifications } from '@/hooks/useApi';
