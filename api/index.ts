@@ -106,6 +106,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (seg1 === 'stats')   return await financeStats(req, res);
     }
 
+    // ── Notifications ─────────────────────────────────────────────────────────
+    if (seg0 === 'notifications') return await notificationsHandler(req, res);
+
     // ── Cloudinary ────────────────────────────────────────────────────────────
     if (seg0 === 'cloudinary') {
       if (seg1 === 'sign') return await cloudinarySign(req, res);
