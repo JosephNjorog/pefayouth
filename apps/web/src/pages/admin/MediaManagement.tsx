@@ -109,7 +109,7 @@ const MediaManagement = () => {
   const { data: galleryItems = [], isLoading: galleryLoading } = useGallery();
   const { mutateAsync: createSermon, isPending: creatingSermon } = useCreateSermon();
   const { mutateAsync: deleteSermon } = useDeleteSermon();
-  const { mutateAsync: updateSermon } = useUpdateSermon();
+  useUpdateSermon(); // available for future inline editing
   const { mutateAsync: createGalleryItem } = useCreateGalleryItem();
   const { mutateAsync: deleteGalleryItem } = useDeleteGalleryItem();
   const { mutateAsync: updateGalleryItem } = useUpdateGalleryItem();

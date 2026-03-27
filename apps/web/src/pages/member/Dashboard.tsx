@@ -254,21 +254,40 @@ const MemberDashboard = () => {
           {notifications.slice(0, 5).map((n: AppNotification) => {
             const iconColor = n.type === 'event' ? 'text-primary' : n.type === 'sermon' ? 'text-accent' : 'text-blue-500';
             const iconBg = n.type === 'event' ? 'bg-primary/10' : n.type === 'sermon' ? 'bg-accent/10' : 'bg-blue-500/10';
+            const navPath = n.type === 'event' ? '/member/events' : n.type === 'sermon' ? '/member/media' : '/member';
+            const label = n.type === 'event' ? 'Event' : n.type === 'sermon' ? 'Sermon' : 'Newsletter';
+            const isExpanded = expandedNotif === n.id;
             return (
-              <div key={n.id} className="flex items-start gap-3 px-4 py-3">
+              <div
+                key={n.id}
+                onClick={() => {
+                  if (isExpanded) {
+                    navigate(navPath);
+                    setExpandedNotif(null);
+                  } else {
+                    setExpandedNotif(n.id);
+                  }
+                }}
+                className="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-muted/40 transition-colors active:bg-muted"
+              >
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${iconBg}`}>
                   {n.type === 'event' && <Calendar className={`w-4 h-4 ${iconColor}`} />}
                   {n.type === 'sermon' && <Play className={`w-4 h-4 ${iconColor}`} />}
                   {n.type === 'newsletter' && <Newspaper className={`w-4 h-4 ${iconColor}`} />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-[10px] font-semibold uppercase tracking-wide ${iconColor}`}>
-                    {n.type === 'event' ? 'Event' : n.type === 'sermon' ? 'Sermon' : 'Newsletter'}
-                  </p>
+                  <p className={`text-[10px] font-semibold uppercase tracking-wide ${iconColor}`}>{label}</p>
                   <p className="text-xs font-semibold text-foreground leading-snug mt-0.5">{n.title}</p>
-                  <div className="text-xs text-muted-foreground leading-relaxed mt-0.5 space-y-0.5 line-clamp-3">
+                  <div className={`text-xs text-muted-foreground leading-relaxed mt-0.5 space-y-0.5 ${isExpanded ? '' : 'line-clamp-3'}`}>
                     {n.message.split('\n').map((line, i) => <p key={i}>{line}</p>)}
                   </div>
+                  {isExpanded ? (
+                    <p className={`mt-1.5 inline-flex items-center gap-1 text-xs font-semibold ${iconColor}`}>
+                      View {label} <ArrowRight className="w-3 h-3" />
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-muted-foreground/50 mt-1 italic">Tap to read more</p>
+                  )}
                 </div>
               </div>
             );
