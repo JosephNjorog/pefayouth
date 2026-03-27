@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Calendar, Play, User, LogOut, Church } from 'lucide-react';
+import { Home, Calendar, Play, User, LogOut, Church, Bell } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -9,6 +9,7 @@ const navItems = [
   { to: '/member', icon: Home, label: 'Home' },
   { to: '/member/events', icon: Calendar, label: 'Events' },
   { to: '/member/media', icon: Play, label: 'Media' },
+  { to: '/member/notifications', icon: Bell, label: 'Updates' },
   { to: '/member/profile', icon: User, label: 'Profile' },
 ];
 
