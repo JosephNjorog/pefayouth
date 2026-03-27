@@ -89,7 +89,9 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
     saveSeenIds(all);
   };
 
-  const getNavPath = (type: AppNotification['type']) => {
+  const notifPagePath = isAdmin ? '/admin/notifications' : '/member/notifications';
+
+  const getTypePath = (type: AppNotification['type']) => {
     if (isAdmin) {
       if (type === 'event')      return '/admin/event-management';
       if (type === 'sermon')     return '/admin/media';
@@ -103,17 +105,15 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
   };
 
   const handleNotificationClick = (n: AppNotification) => {
-    // First click: expand to show full message
+    markRead(n.id);
     if (expanded !== n.id) {
       setExpanded(n.id);
-      markRead(n.id);
       return;
     }
-    // Second click (or "View" button): navigate
-    markRead(n.id);
+    // Second click: go to full notifications page
     setOpen(false);
     setExpanded(null);
-    navigate(getNavPath(n.type));
+    navigate(`${notifPagePath}#notif-${n.id}`);
   };
 
   const handleView = (e: React.MouseEvent, n: AppNotification) => {
@@ -121,7 +121,13 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
     markRead(n.id);
     setOpen(false);
     setExpanded(null);
-    navigate(getNavPath(n.type));
+    navigate(getTypePath(n.type));
+  };
+
+  const goToAllNotifications = () => {
+    setOpen(false);
+    setExpanded(null);
+    navigate(notifPagePath);
   };
 
   const btnClass = variant === 'light'
