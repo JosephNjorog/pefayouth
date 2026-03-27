@@ -7,6 +7,7 @@ import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { NotificationBell } from '@/components/NotificationBell';
 
 interface SidebarItem {
   to: string;
