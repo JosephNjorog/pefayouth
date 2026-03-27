@@ -195,3 +195,12 @@ export const useFinanceReports = () =>
 
 export const useFinanceStats = () =>
   useQuery({ queryKey: ['finance', 'stats'], queryFn: api.getFinanceStats });
+
+// ─── Notifications ─────────────────────────────────────────────────────────
+export const useNotifications = () =>
+  useQuery({
+    queryKey: ['notifications'],
+    queryFn: api.getNotifications,
+    refetchInterval: 60_000, // poll every 60s for new notifications
+    staleTime: 30_000,
+  });
