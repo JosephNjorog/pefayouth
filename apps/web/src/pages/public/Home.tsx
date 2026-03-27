@@ -17,7 +17,7 @@ const groupImages: Record<string, string> = {
   'youths':          '/images/IMG_20250308_095513.jpg',
   'fishers-of-men':  '/images/schoolvisit.jpg',
   'one-more-soul':   '/images/schoolvisitimg4.jpg',
-  'by-grace':        '/images/IMG_20240831_152147.jpg',
+  'by-grace':        '/images/bygracelogo.png',
 };
 
 const Home = () => {
