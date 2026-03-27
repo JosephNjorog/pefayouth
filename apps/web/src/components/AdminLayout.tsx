@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Users, DollarSign, Film, FileText, LogOut, Menu, X, Church,
-  Receipt, Wallet, BarChart3, Heart, Calendar, Newspaper, UserPlus, ClipboardList
+  Receipt, Wallet, BarChart3, Heart, Calendar, Newspaper, UserPlus, ClipboardList, Bell
 } from 'lucide-react';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
 import { useState } from 'react';
