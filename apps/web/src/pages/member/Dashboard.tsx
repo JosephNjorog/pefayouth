@@ -239,6 +239,38 @@ const MemberDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Recent Updates / Notifications */}
+      <div className="bg-card rounded-2xl border border-border overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <div className="flex items-center gap-2">
+            <Bell className="w-4 h-4 text-primary" />
+            <h3 className="font-semibold text-sm">Recent Updates</h3>
+          </div>
+        </div>
+        <div className="divide-y divide-border">
+          {notifications.slice(0, 5).map((n: AppNotification) => (
+            <div key={n.id} className="flex items-start gap-3 px-4 py-3">
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${
+                n.type === 'event' ? 'bg-primary/10' : n.type === 'sermon' ? 'bg-accent/10' : 'bg-blue-500/10'
+              }`}>
+                {n.type === 'event' && <Calendar className="w-4 h-4 text-primary" />}
+                {n.type === 'sermon' && <Play className="w-4 h-4 text-accent" />}
+                {n.type === 'newsletter' && <Newspaper className="w-4 h-4 text-blue-500" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-foreground">{n.title}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 mt-0.5">{n.message}</p>
+              </div>
+            </div>
+          ))}
+          {notifications.length === 0 && (
+            <div className="px-4 py-6 text-center text-sm text-muted-foreground">
+              No updates yet
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
