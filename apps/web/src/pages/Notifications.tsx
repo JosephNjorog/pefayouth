@@ -150,11 +150,12 @@ const NotificationsPage = () => {
             return (
               <motion.div
                 key={n.id}
+                id={`notif-${n.id}`}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
                 onClick={() => handleNotifClick(n)}
-                className={`flex items-start gap-4 px-4 py-4 cursor-pointer transition-colors hover:bg-muted/40 active:bg-muted ${isUnread ? 'bg-primary/[0.03]' : ''}`}
+                className={`flex items-start gap-4 px-4 py-4 cursor-pointer transition-colors hover:bg-muted/40 active:bg-muted ${isUnread ? 'bg-primary/[0.03]' : ''} ${expandedId === n.id ? 'ring-1 ring-primary/20 bg-primary/5' : ''}`}
               >
                 {/* Icon */}
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${cfg.bg}`}>
