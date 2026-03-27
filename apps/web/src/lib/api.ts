@@ -234,3 +234,14 @@ export const getFinanceReports = () => apiFetch<{
   memberCount: number;
 }>('/api/finance/reports');
 export const getFinanceStats = () => apiFetch<FinanceStats>('/api/finance/stats');
+
+// ─── Notifications ────────────────────────────────────────────────────────────
+export interface AppNotification {
+  id: string;
+  type: 'event' | 'sermon' | 'newsletter';
+  title: string;
+  message: string;
+  createdAt: string | null;
+  relatedId: string;
+}
+export const getNotifications = () => apiFetch<AppNotification[]>('/api/notifications');
