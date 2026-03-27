@@ -16,6 +16,7 @@ const MemberDashboard = () => {
   const { data: sermons = [], isLoading: sermonsLoading } = useSermons();
   const { data: attendance = [], isLoading: attendanceLoading } = useAttendance();
   const { data: member, isLoading: memberLoading } = useMember(user?.memberId);
+  const { data: notifications = [] } = useNotifications();
 
   const isLoading = eventsLoading || sermonsLoading || attendanceLoading || memberLoading;
 
