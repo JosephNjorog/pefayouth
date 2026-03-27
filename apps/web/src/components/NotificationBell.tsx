@@ -228,21 +228,22 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
                             {isUnread && <span className="w-2 h-2 rounded-full bg-primary shrink-0" />}
                             <span className="text-[10px] text-muted-foreground/60 ml-auto">{timeAgo(n.createdAt)}</span>
                           </div>
-                          <p className="text-xs font-semibold text-foreground mt-0.5">{n.title}</p>
-                          <p className={`text-xs text-muted-foreground leading-relaxed mt-0.5 ${isExpanded ? '' : 'line-clamp-2'}`}>
-                            {n.message}
-                          </p>
+                          <p className="text-xs font-semibold text-foreground mt-0.5 leading-snug">{n.title}</p>
+                          <div className={`text-xs text-muted-foreground leading-relaxed mt-1 space-y-0.5 ${isExpanded ? '' : 'line-clamp-3'}`}>
+                            {n.message.split('\n').map((line, i) => (
+                              <p key={i}>{line}</p>
+                            ))}
+                          </div>
 
-                          {isExpanded && (
+                          {isExpanded ? (
                             <button
                               onClick={(e) => handleView(e, n)}
-                              className={`mt-2 inline-flex items-center gap-1 text-xs font-medium ${cfg.iconColor} hover:underline`}
+                              className={`mt-2 inline-flex items-center gap-1 text-xs font-semibold ${cfg.iconColor} hover:underline`}
                             >
                               View {cfg.label} <ArrowRight className="w-3 h-3" />
                             </button>
-                          )}
-                          {!isExpanded && (
-                            <p className="text-[10px] text-muted-foreground/50 mt-1">Tap to expand</p>
+                          ) : (
+                            <p className="text-[10px] text-muted-foreground/40 mt-1 italic">Tap to read more</p>
                           )}
                         </div>
                       </div>
