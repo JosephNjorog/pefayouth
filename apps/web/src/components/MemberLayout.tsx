@@ -3,6 +3,7 @@ import { Home, Calendar, Play, User, LogOut, Church } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { NotificationBell } from '@/components/NotificationBell';
 
 const navItems = [
   { to: '/member', icon: Home, label: 'Home' },
