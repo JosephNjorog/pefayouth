@@ -144,7 +144,7 @@ const Register = () => {
       </motion.div>
 
       <div className="py-6 text-center lg:hidden">
-        <p className="text-xs text-muted-foreground">© 2026 PEFA Youth Church</p>
+        <p className="text-xs text-muted-foreground">© 2026 PEFA Youth Works Kajiado</p>
       </div>
     </div>
   );
