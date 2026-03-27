@@ -106,8 +106,9 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
                 <p className="text-xs text-muted-foreground">Welcome back, {user?.name?.split(' ')[0]}</p>
               </div>
             </div>
-            {/* Mobile: theme + logout */}
+            {/* Mobile: notifications + theme + logout */}
             <div className="lg:hidden flex items-center gap-1">
+              <NotificationBell />
               <ThemeToggle />
               <button
                 onClick={logout}
@@ -119,6 +120,7 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
             {/* Desktop user badge */}
             <div className="hidden lg:flex items-center gap-3">
+              <NotificationBell />
               <ThemeToggle />
               <div className="text-right">
                 <p className="text-sm font-medium">{user?.name}</p>
