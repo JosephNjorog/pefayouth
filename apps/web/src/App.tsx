@@ -105,6 +105,7 @@ const App = () => (
             <Route path="/member/events" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><Events /></MemberLayout></ProtectedRoute>} />
             <Route path="/member/events/:id" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><EventDetail /></MemberLayout></ProtectedRoute>} />
             <Route path="/member/media" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><Media /></MemberLayout></ProtectedRoute>} />
+            <Route path="/member/notifications" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><NotificationsPage /></MemberLayout></ProtectedRoute>} />
 
             {/* Admin Dashboard - role-specific */}
             <Route path="/admin" element={<ProtectedRoute allowedRoles={adminRoles}><AdminLayout><AdminDashboardRouter /></AdminLayout></ProtectedRoute>} />
@@ -123,6 +124,7 @@ const App = () => (
             <Route path="/admin/members" element={<ProtectedRoute allowedRoles={secretaryRoles}><AdminLayout><MemberManagement /></AdminLayout></ProtectedRoute>} />
             <Route path="/admin/newsletters" element={<ProtectedRoute allowedRoles={secretaryRoles}><AdminLayout><Newsletters /></AdminLayout></ProtectedRoute>} />
             <Route path="/admin/event-management" element={<ProtectedRoute allowedRoles={secretaryRoles}><AdminLayout><EventManagement /></AdminLayout></ProtectedRoute>} />
+            <Route path="/admin/notifications" element={<ProtectedRoute allowedRoles={adminRoles}><AdminLayout><NotificationsPage /></AdminLayout></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
