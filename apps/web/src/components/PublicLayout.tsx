@@ -26,7 +26,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div>
               <span className="text-base font-bold text-primary">PEFA Youth</span>
-              <span className="hidden sm:block text-[10px] text-muted-foreground -mt-0.5">Church Kajiado</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground -mt-0.5">Works Kajiado</span>
             </div>
           </NavLink>
 
@@ -180,7 +180,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
             <div>
               <h4 className="text-sm font-semibold mb-3">Contact Us</h4>
               <ul className="space-y-2 text-sm text-primary-foreground/60">
-                <li>Pefa Church, Kajiado</li>
+                <li>Pefa Works Kajiado</li>
                 <li>info@pefayouth.org</li>
                 <li>+254 700 000 000</li>
               </ul>
