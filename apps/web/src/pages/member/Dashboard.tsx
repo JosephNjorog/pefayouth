@@ -66,25 +66,38 @@ const MemberDashboard = () => {
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="gradient-primary rounded-2xl p-5 lg:p-6 text-primary-foreground lg:col-span-2"
+          className="relative rounded-2xl overflow-hidden lg:col-span-2 text-white"
+          style={{ minHeight: '160px' }}
         >
-          <h1 className="text-xl lg:text-2xl font-bold">Hello, {memberName.split(' ')[0]}! 👋</h1>
-          <p className="text-sm opacity-80 mt-1">God's grace is sufficient for you today</p>
-          <div className="flex items-center gap-4 mt-4">
-            <div className="bg-primary-foreground/15 rounded-xl px-3 py-2 text-center">
-              <p className="text-lg font-bold">{attendanceRate}</p>
-              <p className="text-[10px] opacity-70">Attendance</p>
-            </div>
-            <div className="bg-primary-foreground/15 rounded-xl px-3 py-2 text-center">
-              <p className="text-lg font-bold">{presentCount}/{attendance.length}</p>
-              <p className="text-[10px] opacity-70">Services</p>
-            </div>
-            {cellGroup && (
-              <div className="bg-primary-foreground/15 rounded-xl px-3 py-2 text-center flex-1">
-                <p className="text-sm font-semibold">{cellGroup}</p>
-                <p className="text-[10px] opacity-70">Cell Group</p>
+          {/* Background image */}
+          <img
+            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            aria-hidden="true"
+          />
+          {/* Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-church-teal-dark/85 via-primary/70 to-transparent" />
+          {/* Content */}
+          <div className="relative p-5 lg:p-6">
+            <h1 className="text-xl lg:text-2xl font-bold">Hello, {memberName.split(' ')[0]}! 👋</h1>
+            <p className="text-sm opacity-80 mt-1">God's grace is sufficient for you today</p>
+            <div className="flex items-center gap-4 mt-4">
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-2 text-center">
+                <p className="text-lg font-bold">{attendanceRate}</p>
+                <p className="text-[10px] opacity-70">Attendance</p>
               </div>
-            )}
+              <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-2 text-center">
+                <p className="text-lg font-bold">{presentCount}/{attendance.length}</p>
+                <p className="text-[10px] opacity-70">Services</p>
+              </div>
+              {cellGroup && (
+                <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-2 text-center flex-1">
+                  <p className="text-sm font-semibold">{cellGroup}</p>
+                  <p className="text-[10px] opacity-70">Cell Group</p>
+                </div>
+              )}
+            </div>
           </div>
         </motion.div>
 
