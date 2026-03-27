@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import {
-  useSermons, useCreateSermon, useDeleteSermon, useUpdateSermon,
+  useSermons, useCreateSermon, useDeleteSermon,
   useGallery, useCreateGalleryItem, useDeleteGalleryItem, useUpdateGalleryItem,
 } from '@/hooks/useApi';
 import {
@@ -109,7 +109,6 @@ const MediaManagement = () => {
   const { data: galleryItems = [], isLoading: galleryLoading } = useGallery();
   const { mutateAsync: createSermon, isPending: creatingSermon } = useCreateSermon();
   const { mutateAsync: deleteSermon } = useDeleteSermon();
-  useUpdateSermon(); // available for future inline editing
   const { mutateAsync: createGalleryItem } = useCreateGalleryItem();
   const { mutateAsync: deleteGalleryItem } = useDeleteGalleryItem();
   const { mutateAsync: updateGalleryItem } = useUpdateGalleryItem();
