@@ -159,6 +159,7 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               </div>
             </div>
             <div className="flex items-center gap-1">
+              <NotificationBell />
               <ThemeToggle />
               <button onClick={logout} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                 <LogOut className="w-4 h-4" />
