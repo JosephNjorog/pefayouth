@@ -204,7 +204,6 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
                 ) : (
                   notifications.map(n => {
                     const isUnread = !seenIds.has(n.id);
-                    const isExpanded = expanded === n.id;
                     const cfg = typeConfig(n.type);
                     const Icon = cfg.icon;
 
@@ -212,46 +211,24 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
                       <div
                         key={n.id}
                         onClick={() => handleNotificationClick(n)}
-                        className={`cursor-pointer flex items-start gap-3 px-4 py-3 transition-colors
-                          ${isUnread ? 'bg-primary/5' : ''}
-                          hover:bg-muted/60 active:bg-muted
-                        `}
+                        className={`cursor-pointer flex items-start gap-3 px-4 py-3 transition-colors ${isUnread ? 'bg-primary/5' : ''} hover:bg-muted/60 active:bg-muted`}
                       >
                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${cfg.bg}`}>
                           <Icon className={`w-4 h-4 ${cfg.iconColor}`} />
                         </div>
-
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className={`text-[10px] font-semibold uppercase tracking-wide ${cfg.iconColor}`}>
-                              {cfg.label}
-                            </span>
+                            <span className={`text-[10px] font-semibold uppercase tracking-wide ${cfg.iconColor}`}>{cfg.label}</span>
                             {isUnread && <span className="w-2 h-2 rounded-full bg-primary shrink-0" />}
                             <span className="text-[10px] text-muted-foreground/60 ml-auto">{timeAgo(n.createdAt)}</span>
                           </div>
                           <p className="text-xs font-semibold text-foreground mt-0.5 leading-snug">{n.title}</p>
-                          {isExpanded ? (
-                            <div className="text-xs text-muted-foreground leading-relaxed mt-1 space-y-0.5 block overflow-visible">
-                              {n.message.split('\n').map((line, i) => (
-                                <p key={i} className="break-words">{line}</p>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-xs text-muted-foreground leading-relaxed mt-1 line-clamp-3 break-words">
-                              {n.message.replace(/\n/g, ' ')}
-                            </p>
-                          )}
-
-                          {isExpanded ? (
-                            <button
-                              onClick={(e) => handleView(e, n)}
-                              className={`mt-2 inline-flex items-center gap-1 text-xs font-semibold ${cfg.iconColor} hover:underline`}
-                            >
-                              View {cfg.label} <ArrowRight className="w-3 h-3" />
-                            </button>
-                          ) : (
-                            <p className="text-[10px] text-muted-foreground/40 mt-1 italic">Tap to read more</p>
-                          )}
+                          <p className="text-xs text-muted-foreground leading-relaxed mt-1 line-clamp-2 break-words">
+                            {n.message.replace(/\n/g, ' ')}
+                          </p>
+                          <p className={`mt-1 text-[10px] font-semibold ${cfg.iconColor} flex items-center gap-0.5`}>
+                            Tap to open <ArrowRight className="w-2.5 h-2.5" />
+                          </p>
                         </div>
                       </div>
                     );
