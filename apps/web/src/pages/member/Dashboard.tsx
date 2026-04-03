@@ -1,16 +1,17 @@
-import { Calendar, Users, TrendingUp, ChevronRight, Loader2, CheckCircle2, Bell, Play, Newspaper, ArrowRight } from 'lucide-react';
+import { Calendar, Users, TrendingUp, ChevronRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useEvents, useSermons, useAttendance, useMember, useRegisterForEvent, useNotifications } from '@/hooks/useApi';
+import { useEvents, useSermons, useAttendance, useMember, useRegisterForEvent } from '@/hooks/useApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { type AppNotification } from '@/lib/api';
+import { RecentNotifications } from '@/components/RecentNotifications';
 
 const MemberDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [checkedIn, setCheckedIn] = useState(false);
+  const navigate = useNavigate();
   const registerForEvent = useRegisterForEvent();
 
   const { data: upcomingEventsData = [], isLoading: eventsLoading } = useEvents({ upcoming: 'true' });
