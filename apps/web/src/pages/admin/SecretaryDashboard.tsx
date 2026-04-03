@@ -2,6 +2,7 @@ import { useMembers, useEvents, useAttendance, useNewsletters } from '@/hooks/us
 import { Users, Calendar, FileText, Newspaper, Film, TrendingUp, UserPlus, Bell, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { RecentNotifications } from '@/components/RecentNotifications';
 
 const SecretaryDashboard = () => {
   const { data: members = [], isLoading: membersLoading } = useMembers();
@@ -82,6 +83,8 @@ const SecretaryDashboard = () => {
           ))}
         </div>
       </div>
+
+      <RecentNotifications basePath="admin" limit={3} />
 
       <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Recent Newsletters */}
