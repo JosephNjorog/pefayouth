@@ -9,6 +9,7 @@ const navItems = [
   { to: '/member', icon: Home, label: 'Home' },
   { to: '/member/events', icon: Calendar, label: 'Events' },
   { to: '/member/media', icon: Play, label: 'Media' },
+  { to: '/member/newsletters', icon: Newspaper, label: 'News' },
   { to: '/member/notifications', icon: Bell, label: 'Updates' },
   { to: '/member/profile', icon: User, label: 'Profile' },
 ];
@@ -102,6 +103,7 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
                   {location.pathname === '/member/events' && 'Events & Calendar'}
                   {location.pathname.startsWith('/member/events/') && 'Event Details'}
                   {location.pathname === '/member/media' && 'Media Library'}
+                  {location.pathname === '/member/newsletters' && 'Newsletters'}
                   {location.pathname === '/member/notifications' && 'Notifications'}
                   {location.pathname === '/member/profile' && 'My Profile'}
                 </h2>
