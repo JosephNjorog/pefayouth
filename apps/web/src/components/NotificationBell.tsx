@@ -106,11 +106,6 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
 
   const handleNotificationClick = (n: AppNotification) => {
     markRead(n.id);
-    if (expanded !== n.id) {
-      setExpanded(n.id);
-      return;
-    }
-    // Second click: go to full notifications page
     setOpen(false);
     setExpanded(null);
     navigate(`${notifPagePath}#notif-${n.id}`);
