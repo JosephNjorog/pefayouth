@@ -1,6 +1,6 @@
 import { Calendar, Users, TrendingUp, ChevronRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useEvents, useSermons, useAttendance, useMember, useRegisterForEvent } from '@/hooks/useApi';
+import { useEvents, useSermons, useAttendance, useMember, useRegisterForEvent, useNotifications } from '@/hooks/useApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -242,51 +242,8 @@ const MemberDashboard = () => {
         </div>
       </div>
 
-      {/* Recent Updates / Notifications */}
-      <div className="bg-card rounded-2xl border border-border overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <div className="flex items-center gap-2">
-            <Bell className="w-4 h-4 text-primary" />
-            <h3 className="font-semibold text-sm">Recent Updates</h3>
-          </div>
-          <Link to="/member/notifications" className="text-xs text-primary font-medium">View All</Link>
-        </div>
-        <div className="divide-y divide-border">
-          {notifications.slice(0, 5).map((n: AppNotification) => {
-            const iconColor = n.type === 'event' ? 'text-primary' : n.type === 'sermon' ? 'text-accent' : 'text-blue-500';
-            const iconBg = n.type === 'event' ? 'bg-primary/10' : n.type === 'sermon' ? 'bg-accent/10' : 'bg-blue-500/10';
-            const label = n.type === 'event' ? 'Event' : n.type === 'sermon' ? 'Sermon' : 'Newsletter';
-            return (
-              <div
-                key={n.id}
-                onClick={() => navigate(`/member/notifications#notif-${n.id}`)}
-                className="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-muted/40 transition-colors active:bg-muted"
-              >
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 ${iconBg}`}>
-                  {n.type === 'event' && <Calendar className={`w-4 h-4 ${iconColor}`} />}
-                  {n.type === 'sermon' && <Play className={`w-4 h-4 ${iconColor}`} />}
-                  {n.type === 'newsletter' && <Newspaper className={`w-4 h-4 ${iconColor}`} />}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`text-[10px] font-semibold uppercase tracking-wide ${iconColor}`}>{label}</p>
-                  <p className="text-xs font-semibold text-foreground leading-snug mt-0.5">{n.title}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed mt-0.5 line-clamp-2 break-words">
-                    {n.message.replace(/\n/g, ' ')}
-                  </p>
-                  <p className={`mt-1.5 inline-flex items-center gap-1 text-xs font-semibold ${iconColor}`}>
-                    Read more <ArrowRight className="w-3 h-3" />
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-          {notifications.length === 0 && (
-            <div className="px-4 py-6 text-center text-sm text-muted-foreground">
-              No updates yet
-            </div>
-          )}
-        </div>
-      </div>
+      {/* Recent Updates */}
+      <RecentNotifications basePath="member" />
     </div>
   );
 };
