@@ -22,6 +22,7 @@ import Profile from "./pages/member/Profile";
 import Events from "./pages/member/Events";
 import EventDetail from "./pages/member/EventDetail";
 import Media from "./pages/member/Media";
+import MemberNewsletters from "./pages/member/Newsletters";
 import AdminDashboard from "./pages/admin/Dashboard";
 import FinanceDashboard from "./pages/admin/FinanceDashboard";
 import SecretaryDashboard from "./pages/admin/SecretaryDashboard";
@@ -106,6 +107,7 @@ const App = () => (
             <Route path="/member/events/:id" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><EventDetail /></MemberLayout></ProtectedRoute>} />
             <Route path="/member/media" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><Media /></MemberLayout></ProtectedRoute>} />
             <Route path="/member/notifications" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><NotificationsPage /></MemberLayout></ProtectedRoute>} />
+            <Route path="/member/newsletters" element={<ProtectedRoute allowedRoles={['member']}><MemberLayout><MemberNewsletters /></MemberLayout></ProtectedRoute>} />
 
             {/* Admin Dashboard - role-specific */}
             <Route path="/admin" element={<ProtectedRoute allowedRoles={adminRoles}><AdminLayout><AdminDashboardRouter /></AdminLayout></ProtectedRoute>} />
