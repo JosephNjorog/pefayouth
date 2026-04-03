@@ -2,6 +2,7 @@ import { useFinanceSummary, useOfferings, useExpenses, useBudget, usePayments } 
 import { DollarSign, TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, LineChart, Line } from 'recharts';
+import { RecentNotifications } from '@/components/RecentNotifications';
 
 const FinanceDashboard = () => {
   const { data: financialSummary = [], isLoading: summaryLoading } = useFinanceSummary();
@@ -136,6 +137,8 @@ const FinanceDashboard = () => {
           })}
         </div>
       </div>
+
+      <RecentNotifications basePath="admin" limit={3} />
 
       {/* Recent Transactions */}
       <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
