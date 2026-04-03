@@ -1,6 +1,6 @@
 import { Calendar, Users, TrendingUp, ChevronRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useEvents, useSermons, useAttendance, useMember, useRegisterForEvent, useNotifications } from '@/hooks/useApi';
+import { useEvents, useSermons, useAttendance, useMember, useRegisterForEvent } from '@/hooks/useApi';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -18,7 +18,6 @@ const MemberDashboard = () => {
   const { data: sermons = [], isLoading: sermonsLoading } = useSermons();
   const { data: attendance = [], isLoading: attendanceLoading } = useAttendance();
   const { data: member, isLoading: memberLoading } = useMember(user?.memberId);
-  const { data: notifications = [] } = useNotifications();
 
   const isLoading = eventsLoading || sermonsLoading || attendanceLoading || memberLoading;
 

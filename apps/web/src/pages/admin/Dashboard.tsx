@@ -2,6 +2,7 @@ import { Users, Calendar, DollarSign, TrendingUp, AlertCircle, CheckCircle, Cloc
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 import { useFinanceStats, usePayments, useEvents, useNewsletters, useBudget, useAttendance } from '@/hooks/useApi';
+import { RecentNotifications } from '@/components/RecentNotifications';
 
 const AdminDashboard = () => {
   const { data: stats } = useFinanceStats();
@@ -187,6 +188,8 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      <RecentNotifications basePath="admin" limit={4} />
     </div>
   );
 };
