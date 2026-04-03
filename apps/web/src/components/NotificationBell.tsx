@@ -99,7 +99,7 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
     } else {
       if (type === 'event')      return '/member/events';
       if (type === 'sermon')     return '/member/media';
-      if (type === 'newsletter') return '/member';
+      if (type === 'newsletter') return '/member/newsletters';
     }
     return '#';
   };
