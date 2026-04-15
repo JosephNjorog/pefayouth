@@ -2,6 +2,10 @@
 
 A modern youth church management platform built for PEFA Youth, enabling members, secretaries, finance admins, and pastors to manage attendance, events, media, finances, and communications.
 
+## Access Restriction
+
+Review access is restricted. Read and comply with [REVIEW_ACCESS_POLICY.md](REVIEW_ACCESS_POLICY.md) before interacting with this repository.
+
 ## Tech Stack
 
 - **Frontend**: React + Vite + TypeScript, Radix UI, Tailwind CSS, React Query v5
