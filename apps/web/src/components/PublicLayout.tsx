@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Church, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -21,9 +21,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
         <div className="container max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <NavLink to="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl gradient-gold shadow-gold flex items-center justify-center">
-              <Church className="w-5 h-5 text-accent-foreground" />
-            </div>
+            <img src="/PEFA-CHURCH-Logo.png" alt="PEFA Logo" className="w-9 h-9 object-contain" />
             <div>
               <span className="text-base font-bold text-primary">PEFA Youth</span>
               <span className="hidden sm:block text-[10px] text-muted-foreground -mt-0.5">Works Kajiado</span>
@@ -140,11 +138,9 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="container max-w-6xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Brand */}
-            <div className="sm:col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="w-9 h-9 rounded-xl gradient-gold flex items-center justify-center">
-                  <Church className="w-5 h-5 text-accent-foreground" />
-                </div>
+            <div className="sm:col-span-2 lg:col-span-1 text-center sm:text-left">
+              <div className="flex items-center gap-2.5 mb-4 justify-center sm:justify-start">
+                <img src="/PEFA-CHURCH-Logo.png" alt="PEFA Logo" className="w-9 h-9 object-contain" />
                 <span className="text-base font-bold">PEFA Youth</span>
               </div>
               <p className="text-sm text-primary-foreground/60 leading-relaxed">
@@ -153,7 +149,7 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             {/* Quick Links */}
-            <div>
+            <div className="text-center sm:text-left">
               <h4 className="text-sm font-semibold mb-3">Quick Links</h4>
               <ul className="space-y-2">
                 {navLinks.map(({ to, label }) => (
@@ -167,21 +163,19 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
 
             {/* Connect */}
-            <div>
+            <div className="text-center sm:text-left">
               <h4 className="text-sm font-semibold mb-3">Connect</h4>
               <ul className="space-y-2 text-sm text-primary-foreground/60">
                 <li>Sunday Service: 9:00 AM</li>
-                <li>Youth Fellowship: Fridays 6PM</li>
                 <li>Monthly Youth Meetup: Sundays</li>
                 <li className="pt-1 font-medium text-primary-foreground/80">Cell Meetings</li>
                 <li>By Grace — Mon 7:00–8:30 PM</li>
-                <li>Interdenominational (Dominion) — Tue 7:00–9:00 PM</li>
-                <li>BBS Virtual (Google Meet) — Wed 9:00–10:00 AM</li>
+                <li>BBS Virtual (Google Meet) — Wed 9:00–10:00 PM</li>
               </ul>
             </div>
 
             {/* Contact */}
-            <div>
+            <div className="text-center sm:text-left">
               <h4 className="text-sm font-semibold mb-3">Contact Us</h4>
               <ul className="space-y-2 text-sm text-primary-foreground/60">
                 <li>Pefa Works Kajiado</li>
