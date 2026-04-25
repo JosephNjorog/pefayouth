@@ -131,8 +131,7 @@ export const cellGroups = [
     heroDescription: 'By Grace is the cell group dedicated to deep biblical learning and intimate fellowship. If you\'re hungry for the Word, this is your home. Through verse-by-verse Bible studies, expository preaching practice, and group discussions, members grow in their understanding of Scripture and their ability to share it with others.',
     highlights: [
       'By Grace meets at Pefa Works Building — Mondays 7:00–8:30 PM',
-      'Interdenominational Meetup (Dominion) — Tuesdays 7:00–9:00 PM',
-      'BBS (Bible & Book Study) via Google Meet — Wednesdays 9:00–10:00 AM',
+      'BBS (Bible & Book Study) via Google Meet — Wednesdays 9:00–10:00 PM',
       'Preaching and teaching workshops for aspiring ministers',
       'Fellowship meals and sharing testimony nights',
       'Guest speakers and in-depth theological discussions',
