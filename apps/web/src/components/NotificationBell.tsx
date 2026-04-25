@@ -42,9 +42,12 @@ const typeConfig = (type: AppNotification['type']) => ({
 
 interface Props {
   variant?: 'light' | 'default';
+  placement?: 'above' | 'below';
 }
 
-export const NotificationBell = ({ variant = 'default' }: Props) => {
+export const NotificationBell = ({ variant = 'default', placement }: Props) => {
+  // sidebar (light variant) defaults to above; header defaults to below
+  const resolvedPlacement = placement ?? (variant === 'light' ? 'above' : 'below');
   const { data: notifications = [] } = useNotifications();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -153,17 +156,20 @@ export const NotificationBell = ({ variant = 'default' }: Props) => {
             />
 
             <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.97 }}
+              initial={{ opacity: 0, y: resolvedPlacement === 'above' ? 8 : -8, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              exit={{ opacity: 0, y: resolvedPlacement === 'above' ? 8 : -8, scale: 0.97 }}
               transition={{ duration: 0.15 }}
               // Mobile: fixed, centered, full-width with margin
-              // Desktop: absolute dropdown anchored to right of bell
-              className="
+              // Desktop: absolute anchored above or below the bell
+              className={`
                 fixed left-3 right-3 top-[70px] z-50
-                sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-96 sm:inset-[unset]
+                sm:absolute sm:left-auto sm:right-0 sm:w-96 sm:inset-[unset]
+                ${resolvedPlacement === 'above'
+                  ? 'sm:bottom-full sm:mb-2 sm:top-[unset]'
+                  : 'sm:top-full sm:mt-2'}
                 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden
-              "
+              `}
             >
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
