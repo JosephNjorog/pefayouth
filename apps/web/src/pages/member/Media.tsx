@@ -9,7 +9,6 @@ import type { GalleryItem } from '@/lib/api';
 
 // Static church photos shown as a built-in folder
 const STATIC_PHOTOS: GalleryItem[] = [
-  { id: 's1', title: 'Worship Service',      url: '/images/herobg.jpg',                  event: 'Church Photos', date: '2025-03-08', type: 'image' },
   { id: 's2', title: 'Youth Fellowship',      url: '/images/IMG_20250308_095513.jpg',     event: 'Church Photos', date: '2025-03-08', type: 'image' },
   { id: 's3', title: 'Youth Community',       url: '/images/IMG_20250308_090922.jpg',     event: 'Church Photos', date: '2025-03-08', type: 'image' },
   { id: 's4', title: 'December Event 2024',   url: '/images/IMG_20241215_115457.jpg',     event: 'Church Photos', date: '2024-12-15', type: 'image' },
