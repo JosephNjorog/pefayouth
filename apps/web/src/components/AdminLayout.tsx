@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, DollarSign, Film, FileText, LogOut, Menu, X, Church,
+  LayoutDashboard, Users, DollarSign, Film, FileText, LogOut, Menu, X,
   Receipt, Wallet, BarChart3, Heart, Calendar, Newspaper, UserPlus, ClipboardList, Bell
 } from 'lucide-react';
 import { useAuth, UserRole } from '@/contexts/AuthContext';
@@ -112,11 +112,9 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       <aside className="hidden lg:flex flex-col w-64 gradient-hero text-primary-foreground shrink-0">
         <div className="p-5">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
-              <Church className="w-5 h-5 text-accent" />
-            </div>
+            <img src="/PEFA-CHURCH-Logo.png" alt="PEFA Logo" className="w-10 h-10 object-contain shrink-0" />
             <div>
-              <h1 className="font-bold text-lg">PEFA Youth</h1>
+              <h1 className="font-bold text-base">PEFA Youth</h1>
               <p className="text-[10px] opacity-70">{roleLabels[user?.role || 'super_admin']}</p>
             </div>
           </div>
@@ -182,8 +180,8 @@ export const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 className="lg:hidden fixed left-0 top-0 bottom-0 w-72 gradient-hero text-primary-foreground z-50 flex flex-col">
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3">
-                    <Church className="w-6 h-6 text-accent" />
-                    <span className="font-bold">PEFA Youth</span>
+                    <img src="/PEFA-CHURCH-Logo.png" alt="PEFA Logo" className="w-6 h-6 object-contain" />
+                    <span className="font-bold text-base">PEFA Youth</span>
                   </div>
                   <button onClick={() => setMobileMenuOpen(false)} className="p-1"><X className="w-5 h-5" /></button>
                 </div>
