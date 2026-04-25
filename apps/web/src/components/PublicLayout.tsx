@@ -20,8 +20,12 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border">
         <div className="container max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <NavLink to="/">
-            <img src="/PEFA-CHURCH-Logo.png" alt="PEFA Logo" className="h-10 w-auto object-contain" />
+          <NavLink to="/" className="flex items-center gap-2.5">
+            <img src="/PEFA-CHURCH-Logo.png" alt="PEFA Logo" className="w-9 h-9 object-contain" />
+            <div>
+              <span className="text-base font-bold text-primary">PEFA Youth</span>
+              <span className="hidden sm:block text-[10px] text-muted-foreground -mt-0.5">Works Kajiado</span>
+            </div>
           </NavLink>
 
           {/* Desktop Nav */}
