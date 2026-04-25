@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Calendar, Play, User, LogOut, Church, Bell, Newspaper } from 'lucide-react';
+import { Home, Calendar, Play, User, LogOut, Bell, Newspaper } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -25,11 +25,9 @@ export const MemberLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Sidebar Header */}
         <div className="p-6 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-gold shadow-gold flex items-center justify-center">
-              <Church className="w-5 h-5 text-accent-foreground" />
-            </div>
+            <img src="/PEFA-CHURCH-Logo.png" alt="PEFA Logo" className="w-10 h-10 object-contain shrink-0" />
             <div>
-              <h2 className="text-sm font-bold text-primary">PEFA Youth</h2>
+              <h2 className="text-base font-bold text-primary">PEFA Youth</h2>
               <p className="text-xs text-muted-foreground">Member Portal</p>
             </div>
           </div>
